@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id: chapter.sql.xml 514 2013-01-14 10:20:12Z netkiller $ -->
+<chapter id="sql">
+	<title>SQL Statement Syntax</title>
+	<subtitle>Structured Query Language</subtitle>
+	<section id="sql.distinct">
+		<title>DISTINCT</title>
+		<para>SELECT DISTINCT user.name FROM user</para>
+		<screen>
+SELECT DISTINCT user.name FROM user
+		</screen>
+	</section>
+	<section id="sql.groupby">
+		<title>group by</title>
+		<para>统计重复的手机号吗</para>
+		<screen>
+select * from (select count(mobile) as c, mobile from member where length(mobile) >= 11 group by mobile) as m where m.c > 1;
+		</screen>
+	</section>
+	<section id="sql.replace">
+		<title>replace</title>
+		<para>replace into</para>
+		<screen>
+replace into (id) value('1')
+		</screen>
+	</section>
+	<section id="sql.outfile">
+		<title>OUTFILE/LOAD DATA INFILE</title>
+		<para>查询结果输出到文件</para>
+		<screen>
+SELECT * FROM tablename INTO OUTFILE '/tmp/tablename.txt';
+		</screen>
+		<para>使用tee将屏幕输出到文件</para>
+		<screen>
+		<![CDATA[
+mysql>tee /home/neo/screen.txt
+mysql>select * from user;
+mysql>exit
+		]]>
+		</screen>
+		<screen>
+		<![CDATA[
+SELECT * INTO OUTFILE '/home/mark/Orders.txt'
+　　FIELDS
+　　TERMINATED BY = ','
+　　FROM Orders
+　　WHERE Order_Date >= '2000-01-01'
+		]]>
+		</screen>
+		<screen>
+		<![CDATA[
+LOAD DATA INFILE 'data.txt' INTO TABLE db2.my_table;
+		]]>
+		</screen>
+		<section id="sql.outfile.csv">
+			<title>Export data to CSV from MySQL</title>
+			<screen>
+SELECT *
+INTO OUTFILE '/tmp/products.csv'
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+ESCAPED BY '\\'
+LINES TERMINATED BY '\n'
+FROM products
+			</screen>
+		</section>
+	</section>
+	<section id="sql.92">
+		<title>SQL 92</title>
+
+			<para>insert + select</para>
+			<screen>
+insert into product_type_commission select id,5,1,1,0,0,0,0,0,0 from product_type where title='notebook' and is_physical=0;
+			</screen>
+
+			<para>update table1,table2</para>
+			<screen>
+begin;
+ALTER TABLE `customer` ADD COLUMN `cutoff_time` TIMESTAMP NOT NULL default '0000-00-00 00:00:00';
+update customer,agent set customer.cutoff_time = agent.cutoff_time where customer.id = agent.id;
+ALTER TABLE `agent` DROP COLUMN `cutoff_time`;
+commit;
+			</screen>
+
+			<para>update table1 set field1 = (select value from table2)</para>
+			<screen>
+UPDATE
+	transaction
+SET
+	transaction.total_sold_price = (
+		SELECT
+			SUM(transaction_item.price)
+	FROM
+			transaction_item
+		WHERE transaction_item.transaction_id = 100
+	)
+WHERE
+	transaction.id = 100
+			</screen>
+			<para>update table1, (select * from other) as table2 set table1.field1 = table2.field1</para>
+			<screen>
+UPDATE
+	transaction,(	SELECT
+						SUM(product_item.bought_price) AS total_bought_price, transaction_item.transaction_id
+					FROM
+						transaction_item
+			    	WHERE
+						transaction_item.transaction_id IN ( '123','456' )
+			     ) as total
+SET
+	transaction.total_bought_price = total.total_bought_price
+WHERE
+	transaction.id = total.transaction_id
+
+			</screen>
+
+		<para>join + subquery</para>
+		<screen>
+select u.*,t.category,t.items,t.[property] from tb_sysregchkusers as u left join (select a.items as category, b.* from (select id, items from tb_sysregchktask where categoryid=0) as a left join tb_sysregchktask as b on b.categoryid=a.id ) as t on u.taskID=t.id
+
+select * from tb_sysregchklog where CONVERT(datetime,CONVERT(varchar(10),checkTime,120)) between convert(datetime,'2007-12-12') and convert(datetime,'2007-12-12')
+		</screen>
+
+		<screen>
+select DISTINCT user_point_history.user_id,user.username,
+(select count(id) from transaction where id = user_point_history.transaction_id) as transactions,
+(SELECT SUM(u_p_h.points) FROM user_point_history as u_p_h WHERE u_p_h.type != 'RDMP' AND u_p_h.status IN('pr','ac') AND u_p_h.user_id = user_point_history.user_id) as total_points_earned,
+(SELECT SUM(u_p_h.points) FROM user_point_history as u_p_h WHERE u_p_h.type = 'RDMP' AND u_p_h.status IN('pr','ac') AND u_p_h.user_id = user_point_history.user_id) as total_points_redeemed
+from user_point_history,user where user_point_history.user_id = user.id;
+		</screen>
+
+		<para>(total_points_earned - total_points_redeemed) as current_balance_points </para>
+		<screen>
+select user_id, username, transactions, total_points_earned, total_points_redeemed, (total_points_earned - total_points_redeemed) as current_balance_points
+from (select DISTINCT user_point_history.user_id,user.username,
+(select count(id) from transaction where id = user_point_history.transaction_id) as transactions,
+(SELECT SUM(u_p_h.points) FROM user_point_history as u_p_h WHERE u_p_h.type != 'RDMP' AND u_p_h.status IN('pr','ac') AND u_p_h.user_id = user_point_history.user_id) as total_points_earned,
+(SELECT SUM(u_p_h.points) FROM user_point_history as u_p_h WHERE u_p_h.type = 'RDMP' AND u_p_h.status IN('pr','ac') AND u_p_h.user_id = user_point_history.user_id) as total_points_redeemed
+from user_point_history,user where user_point_history.user_id = user.id) as user_performance;
+		</screen>
+
+		<para>subquery作为一个字段使用 </para>
+		<screen>
+select product_type_attribute.*,(select 'selected' from product_type_attribute_set where product_type_attribute_set.product_type_attribute_id = product_type_attribute.id and product_type_attribute_set.product_type_id = 26) as selected
+from product_type_attribute;
+		</screen>
+
+	</section>
+	&chapter.sql.function.xml;
+	&chapter.sql.transactional.xml;
+<section id="sql.mysql">
+	<title>MySQL 专有命令</title>
+	<section id="sql_no_cache">
+		<title>SQL_NO_CACHE</title>
+		<screen>
+SELECT /*!40001 SQL_NO_CACHE */ * FROM table
+		</screen>
+	</section>
+</section>
+</chapter>

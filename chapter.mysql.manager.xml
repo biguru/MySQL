@@ -1,0 +1,711 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id: chapter.mysql.manager.xml 656 2013-08-05 09:41:22Z netkiller $ -->
+<chapter id="mysql.administration">
+	<title>Database Administration</title>
+	<section id="mysql.user">
+		<title>User Account Management</title>
+		<section>
+			<title>Create User</title>
+			<programlisting>
+CREATE USER user [IDENTIFIED BY [PASSWORD] 'password']
+    [, user [IDENTIFIED BY [PASSWORD] 'password']] ...
+			</programlisting>
+			<screen>
+CREATE USER 'test'@'xxx.xxx.xxx.xxx' IDENTIFIED BY  'your_password';
+			</screen>
+
+			<para>add a new user by grant</para>
+			<programlisting>
+			<![CDATA[
+GRANT ALL PRIVILEGES ON opencart.* TO 'neo'@'localhost' IDENTIFIED BY 'chen' WITH GRANT OPTION;
+
+GRANT ALL PRIVILEGES ON *.* TO 'neo'@'localhost' IDENTIFIED BY 'chen' WITH GRANT OPTION;
+
+FLUSH PRIVILEGES;
+			]]>
+			</programlisting>
+		</section>
+		<section>
+			<title>Drop User</title>
+			<screen>
+DROP USER user [, user] ...
+			</screen>
+			<programlisting>
+			<![CDATA[
+mysql> drop user admin@'localhost';
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> drop user admin@'127.0.0.1';
+Query OK, 0 rows affected (0.00 sec)
+			]]>
+			</programlisting>
+		</section>
+		<section>
+			<title>Rename User</title>
+			<screen>
+RENAME USER old_user TO new_user [, old_user TO new_user] ...
+			</screen>
+
+		</section>
+		<section>
+			<title>SET PASSWORD</title>
+			<screen>
+SET PASSWORD FOR 'bob'@'%.loc.gov' = PASSWORD('newpass');
+
+SET PASSWORD FOR 'root'@'%' = PASSWORD('co2uqAMAho1aSOS62146Xoci6ogu4I');
+			</screen>
+			<screen>
+CREATE USER 'root'@'192.168.1.%' IDENTIFIED BY 'password';
+			</screen>
+		</section>
+		<section>
+			<title>Reset root password</title>
+			<para>忘记root密码是使用</para>
+			<screen>
+			<![CDATA[
+shell>mysqld_safe --skip-grant-tables &
+shell>mysqladmin -u root flush-privileges password "newpassword"
+			]]>
+			</screen>
+		</section>
+	</section>
+	<section id="mysql.privilege">
+		<title>Access Privilege System</title>
+		<screen>
+global privileges
+OR (database privileges AND host privileges)
+OR table privileges
+OR column privileges
+OR routine privileges
+		</screen>
+		<screen>
+Table 12.1. Permissible Privileges for GRANT and REVOKE
+
+Privilege	Meaning
+ALL [PRIVILEGES]	Grant all privileges at specified access level except GRANT OPTION
+ALTER	Enable use of ALTER TABLE
+ALTER ROUTINE	Enable stored routines to be altered or dropped
+CREATE	Enable database and table creation
+CREATE ROUTINE	Enable stored routine creation
+CREATE TABLESPACE	Enable tablespaces and log file groups to be created, altered, or dropped
+CREATE TEMPORARY TABLES	Enable use of CREATE TEMPORARY TABLE
+CREATE USER	Enable use of CREATE USER, DROP USER, RENAME USER, and REVOKE ALL PRIVILEGES
+CREATE VIEW	Enable views to be created or altered
+DELETE	Enable use of DELETE
+DROP	Enable databases, tables, and views to be dropped
+EVENT	Enable use of events for the Event Scheduler
+EXECUTE	Enable the user to execute stored routines
+FILE	Enable the user to cause the server to read or write files
+GRANT OPTION	Enable privileges to be granted to or removed from other accounts
+INDEX	Enable indexes to be created or dropped
+INSERT	Enable use of INSERT
+LOCK TABLES	Enable use of LOCK TABLES on tables for which you have the SELECT privilege
+PROCESS	Enable the user to see all processes with SHOW PROCESSLIST
+PROXY	Enable user proxying
+REFERENCES	Not implemented
+RELOAD	Enable use of FLUSH operations
+REPLICATION CLIENT	Enable the user to ask where master or slave servers are
+REPLICATION SLAVE	Enable replication slaves to read binary log events from the master
+SELECT	Enable use of SELECT
+SHOW DATABASES	Enable SHOW DATABASES to show all databases
+SHOW VIEW	Enable use of SHOW CREATE VIEW
+SHUTDOWN	Enable use of mysqladmin shutdown
+SUPER	Enable use of other administrative operations such as CHANGE MASTER TO, KILL, PURGE BINARY LOGS, SET GLOBAL, and mysqladmin debug command
+TRIGGER	Enable trigger operations
+UPDATE	Enable use of UPDATE
+USAGE	Synonym for “no privileges”
+		</screen>
+		<ulink url="http://dev.mysql.com/doc/refman/5.5/en/grant.html#grant-table-privileges" />
+		<section>
+			<title>SHOW GRANTS</title>
+			<screen>
+			<![CDATA[
+mysql> SHOW GRANTS FOR 'root'@'localhost';
++---------------------------------------------------------------------+
+| Grants for root@localhost                                           |
++---------------------------------------------------------------------+
+| GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION |
++---------------------------------------------------------------------+
+1 row in set (0.00 sec)
+			]]>
+			</screen>
+			<screen>
+			<![CDATA[
+mysql> show grants;
++---------------------------------------------------------------------------------+
+| Grants for root@localhost                                           |
++---------------------------------------------------------------------------------+
+| GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION |
++---------------------------------------------------------------------------------+
+1 row in set (0.00 sec)
+			]]>
+			</screen>
+		</section>
+		<section>
+			<title>show privileges</title>
+			<screen>
+			<![CDATA[
+mysql> show privileges;
++-------------------------+---------------------------------------+-------------------------------------------------------+
+| Privilege               | Context                               | Comment                                               |
++-------------------------+---------------------------------------+-------------------------------------------------------+
+| Alter                   | Tables                                | To alter the table                                    |
+| Alter routine           | Functions,Procedures                  | To alter or drop stored functions/procedures          |
+| Create                  | Databases,Tables,Indexes              | To create new databases and tables                    |
+| Create routine          | Databases                             | To use CREATE FUNCTION/PROCEDURE                      |
+| Create temporary tables | Databases                             | To use CREATE TEMPORARY TABLE                         |
+| Create view             | Tables                                | To create new views                                   |
+| Create user             | Server Admin                          | To create new users                                   |
+| Delete                  | Tables                                | To delete existing rows                               |
+| Drop                    | Databases,Tables                      | To drop databases, tables, and views                  |
+| Event                   | Server Admin                          | To create, alter, drop and execute events             |
+| Execute                 | Functions,Procedures                  | To execute stored routines                            |
+| File                    | File access on server                 | To read and write files on the server                 |
+| Grant option            | Databases,Tables,Functions,Procedures | To give to other users those privileges you possess   |
+| Index                   | Tables                                | To create or drop indexes                             |
+| Insert                  | Tables                                | To insert data into tables                            |
+| Lock tables             | Databases                             | To use LOCK TABLES (together with SELECT privilege)   |
+| Process                 | Server Admin                          | To view the plain text of currently executing queries |
+| Proxy                   | Server Admin                          | To make proxy user possible                           |
+| References              | Databases,Tables                      | To have references on tables                          |
+| Reload                  | Server Admin                          | To reload or refresh tables, logs and privileges      |
+| Replication client      | Server Admin                          | To ask where the slave or master servers are          |
+| Replication slave       | Server Admin                          | To read binary log events from the master             |
+| Select                  | Tables                                | To retrieve rows from table                           |
+| Show databases          | Server Admin                          | To see all databases with SHOW DATABASES              |
+| Show view               | Tables                                | To see views with SHOW CREATE VIEW                    |
+| Shutdown                | Server Admin                          | To shut down the server                               |
+| Super                   | Server Admin                          | To use KILL thread, SET GLOBAL, CHANGE MASTER, etc.   |
+| Trigger                 | Tables                                | To use triggers                                       |
+| Create tablespace       | Server Admin                          | To create/alter/drop tablespaces                      |
+| Update                  | Tables                                | To update existing rows                               |
+| Usage                   | Server Admin                          | No privileges - allow connect only                    |
++-------------------------+---------------------------------------+-------------------------------------------------------+
+31 rows in set (0.00 sec)
+			]]>
+			</screen>
+		</section>
+		<section>
+			<title>Grant privileges </title>
+			<para>Global privileges </para>
+			<screen>
+GRANT ALL ON *.* TO 'someuser'@'somehost';
+GRANT SELECT, INSERT ON *.* TO 'someuser'@'somehost';
+			</screen>
+			<para>Database privileges </para>
+			<screen>
+GRANT ALL ON mydb.* TO 'someuser'@'somehost';
+GRANT SELECT, INSERT ON mydb.* TO 'someuser'@'somehost';
+			</screen>
+			<para>Table privileges </para>
+			<screen>
+GRANT ALL ON mydb.mytbl TO 'someuser'@'somehost';
+GRANT SELECT, INSERT ON mydb.mytbl TO 'someuser'@'somehost';
+			</screen>
+			<para>Column privileges </para>
+			<screen>
+GRANT SELECT (col1), INSERT (col1,col2) ON mydb.mytbl TO 'someuser'@'somehost';
+			</screen>
+			<para>Routine privileges </para>
+			<screen>
+GRANT CREATE ROUTINE ON mydb.* TO 'someuser'@'somehost';
+GRANT EXECUTE ON PROCEDURE mydb.myproc TO 'someuser'@'somehost';
+			</screen>
+		</section>
+		<section>
+			<title>Revoke privileges</title>
+			<screen>
+REVOKE
+    priv_type [(column_list)]
+      [, priv_type [(column_list)]] ...
+    ON [object_type] priv_level
+    FROM user [, user] ...
+
+REVOKE ALL PRIVILEGES, GRANT OPTION
+    FROM user [, user] ...
+			</screen>
+		</section>
+		<section>
+			<title>Show Privileges</title>
+			<programlisting>
+			<![CDATA[
+mysql> select * from user where user = 'neo'\G
+*************************** 1. row ***************************
+                 Host: 192.168.0.5
+                 User: neo
+             Password: *7564B7B0A062C9523700601CBA1DCE1F861D6270
+          Select_priv: Y
+          Insert_priv: Y
+          Update_priv: Y
+          Delete_priv: Y
+          Create_priv: Y
+            Drop_priv: Y
+          Reload_priv: Y
+        Shutdown_priv: Y
+         Process_priv: Y
+            File_priv: Y
+           Grant_priv: N
+      References_priv: Y
+           Index_priv: Y
+           Alter_priv: Y
+         Show_db_priv: Y
+           Super_priv: Y
+Create_tmp_table_priv: Y
+     Lock_tables_priv: Y
+         Execute_priv: Y
+      Repl_slave_priv: Y
+     Repl_client_priv: Y
+     Create_view_priv: Y
+       Show_view_priv: Y
+  Create_routine_priv: Y
+   Alter_routine_priv: Y
+     Create_user_priv: Y
+           Event_priv: Y
+         Trigger_priv: Y
+             ssl_type:
+           ssl_cipher:
+          x509_issuer:
+         x509_subject:
+        max_questions: 0
+          max_updates: 0
+      max_connections: 0
+ max_user_connections: 0
+1 row in set (0.00 sec)
+
+mysql>
+			]]>
+			</programlisting>
+		</section>
+		<section>
+			<title>MAX_QUERIES_PER_HOUR/MAX_UPDATES_PER_HOUR</title>
+			<programlisting>
+			<![CDATA[
+GRANT USAGE ON *.* TO ...
+  WITH MAX_QUERIES_PER_HOUR 500 MAX_UPDATES_PER_HOUR 100;
+			]]>
+			</programlisting>
+		</section>
+	</section>
+	<section id="maintenance">
+		<title>Maintenance 数据库维护</title>
+		<section>
+			<title>CHECK 检查表</title>
+			<screen>
+CHECK TABLE `dbname`.`actions`;
+CHECK TABLE `dbname`.`actions` QUICK FAST MEDIUM EXTENDED CHANGED;
+			</screen>
+		</section>
+		<section>
+			<title>ANALYZE 分析表</title>
+			<screen>
+ANALYZE TABLE `dbname`.`actions`;
+			</screen>
+		</section>
+		<section>
+			<title>CHECKSUM</title>
+			<screen>
+CHECKSUM TABLE `dbname`.`actions` QUICK;
+			</screen>
+		</section>
+		<section>
+			<title>OPTIMIZE 优化表</title>
+			<screen>
+OPTIMIZE TABLE `dbname`.`actions`;
+			</screen>
+		</section>
+		<section>
+			<title>REPAIR 修复</title>
+			<screen>
+REPAIR TABLE `dbname`.`members`;
+SHOW TABLE STATUS LIKE 'members';
+			</screen>
+		</section>
+	</section>
+
+
+<section id="mysql.show">
+	<title>SHOW COMMAND</title>
+	<screen>
+SHOW DATABASES;
+SHOW TABLE STATUS FROM `db`;
+SHOW FUNCTION STATUS WHERE `Db`='db';
+SHOW PROCEDURE STATUS WHERE `Db`='db';
+SHOW TRIGGERS FROM `db`;
+
+Show Global Status;
+Show global variables;
+Show full processlist;
+	</screen>
+
+	<section id="mysql.version">
+		<title>查看版本</title>
+		<para>Server</para>
+		<screen>
+mysql> select version();
++-----------+
+| version() |
++-----------+
+| 5.0.77    |
++-----------+
+1 row in set (0.00 sec)
+		</screen>
+		<screen>
+mysql> status;
+--------------
+mysql  Ver 14.12 Distrib 5.0.77, for redhat-linux-gnu (x86_64) using readline 5.1
+
+Connection id:          1533
+Current database:
+Current user:           root@localhost
+SSL:                    Not in use
+Current pager:          stdout
+Using outfile:          ''
+Using delimiter:        ;
+Server version:         5.0.77 Source distribution
+Protocol version:       10
+Connection:             Localhost via UNIX socket
+Server characterset:    latin1
+Db     characterset:    latin1
+Client characterset:    latin1
+Conn.  characterset:    latin1
+UNIX socket:            /var/lib/mysql/mysql.sock
+Uptime:                 1 day 21 hours 40 min 52 sec
+
+Threads: 1  Questions: 22172  Slow queries: 0  Opens: 3130  Flush tables: 1  Open tables: 64  Queries per second avg: 0.135
+--------------
+
+		</screen>
+		<para>Client</para>
+		<screen>
+[root@development ~]# mysql -V
+mysql  Ver 14.12 Distrib 5.0.77, for redhat-linux-gnu (x86_64) using readline 5.1
+		</screen>
+	</section>
+
+	<section id="show.status">
+		<title>status</title>
+		<programlisting>
+		<![CDATA[
+mysql> show status;
+		]]>
+		</programlisting>
+
+		<section id="show.status">
+			<title>show status</title>
+			<screen>
+			</screen>
+			<screen>
+数据库性能状态
+(1)QPS(每秒Query量)
+QPS = Questions(or Queries) / seconds
+mysql > show /*50000 global */ status like 'Question';
+
+(2)TPS(每秒事务量)
+TPS = (Com_commit + Com_rollback) / seconds
+mysql > show status like 'Com_commit';
+mysql > show status like 'Com_rollback';
+
+(3)key Buffer 命中率
+key_buffer_read_hits = (1-key_reads / key_read_requests) * 100%
+key_buffer_write_hits = (1-key_writes / key_write_requests) * 100%
+
+mysql> show status like 'Key%';
+
+(4)InnoDB Buffer命中率
+innodb_buffer_read_hits = (1 - innodb_buffer_pool_reads / innodb_buffer_pool_read_requests) * 100%
+
+mysql> show status like 'innodb_buffer_pool_read%';
+
+(5)Query Cache命中率
+Query_cache_hits = (Qcahce_hits / (Qcache_hits + Qcache_inserts )) * 100%;
+
+mysql> show status like 'Qcache%';
+(6)Table Cache状态量
+mysql> show status like 'open%';
+
+(7)Thread Cache 命中率
+Thread_cache_hits = (1 - Threads_created / connections ) * 100%
+
+mysql> show status like 'Thread%';
+
+mysql> show status like 'Connections';
+
+(8)锁定状态
+mysql> show status like '%lock%';
+
+(9)复制延时量
+mysql > show slave status
+
+(10) Tmp Table 状况(临时表状况)
+mysql > show status like 'Create_tmp%';
+(11) Binlog Cache 使用状况
+mysql > show status like 'Binlog_cache%';
+
+(12) Innodb_log_waits 量
+mysql > show status like 'innodb_log_waits';
+			</screen>
+		</section>
+		<section>
+			<title>show master status</title>
+			<screen>
+			<![CDATA[
+mysql> show master status;
++---------------------+-----------+--------------+------------------+
+| File                | Position  | Binlog_Do_DB | Binlog_Ignore_DB |
++---------------------+-----------+--------------+------------------+
+| DBMaster-bin.000018 | 409468882 | example      |                  |
++---------------------+-----------+--------------+------------------+
+1 row in set (0.00 sec)
+
+mysql>
+			]]>
+			</screen>
+		</section>
+		<section>
+			<title>show slave status</title>
+			<screen>
+			<![CDATA[
+mysql> show slave status/G
+
+得到的列表会有类似下面的数据：
+
+File: mysql-bin.000001
+Position: 1374
+Binlog_Do_DB: test
+Binlog_Ignore_DB: mysql
+
+Slave_IO_State: Waiting for master to send event
+Slave_IO_Running: Yes
+Slave_SQL_Running: Yes
+			]]>
+			</screen>
+		</section>
+		<section>
+			<title>show plugins</title>
+			<screen>
+			<![CDATA[
+mysql> SHOW PLUGINS;
++------------+----------+----------------+---------+---------+
+| Name       | Status   | Type           | Library | License |
++------------+----------+----------------+---------+---------+
+| binlog     | ACTIVE   | STORAGE ENGINE | NULL    | GPL     |
+| partition  | ACTIVE   | STORAGE ENGINE | NULL    | GPL     |
+| ARCHIVE    | ACTIVE   | STORAGE ENGINE | NULL    | GPL     |
+| BLACKHOLE  | ACTIVE   | STORAGE ENGINE | NULL    | GPL     |
+| CSV        | ACTIVE   | STORAGE ENGINE | NULL    | GPL     |
+| FEDERATED  | DISABLED | STORAGE ENGINE | NULL    | GPL     |
+| MEMORY     | ACTIVE   | STORAGE ENGINE | NULL    | GPL     |
+| InnoDB     | ACTIVE   | STORAGE ENGINE | NULL    | GPL     |
+| MyISAM     | ACTIVE   | STORAGE ENGINE | NULL    | GPL     |
+| MRG_MYISAM | ACTIVE   | STORAGE ENGINE | NULL    | GPL     |
++------------+----------+----------------+---------+---------+
+10 rows in set (0.00 sec)
+			]]>
+			</screen>
+		</section>
+	</section>
+	<section id="show.processlist">
+		<title>show processlist</title>
+		<screen>
+命令： show processlist;
+如果是root帐号，你能看到所有用户的当前连接。如果是其它普通帐号，只能看到自己占用的连接。
+show processlist;只列出前100条，如果想全列出请使用show full processlist;
+mysql> show processlist;
+
+命令： show status;
+
+Aborted_clients 由于客户没有正确关闭连接已经死掉，已经放弃的连接数量。
+Aborted_connects 尝试已经失败的MySQL服务器的连接的次数。
+Connections 试图连接MySQL服务器的次数。
+Created_tmp_tables 当执行语句时，已经被创造了的隐含临时表的数量。
+Delayed_insert_threads 正在使用的延迟插入处理器线程的数量。
+Delayed_writes 用INSERT DELAYED写入的行数。
+Delayed_errors 用INSERT DELAYED写入的发生某些错误(可能重复键值)的行数。
+Flush_commands 执行FLUSH命令的次数。
+Handler_delete 请求从一张表中删除行的次数。
+Handler_read_first 请求读入表中第一行的次数。
+Handler_read_key 请求数字基于键读行。
+Handler_read_next 请求读入基于一个键的一行的次数。
+Handler_read_rnd 请求读入基于一个固定位置的一行的次数。
+Handler_update 请求更新表中一行的次数。
+Handler_write 请求向表中插入一行的次数。
+Key_blocks_used 用于关键字缓存的块的数量。
+Key_read_requests 请求从缓存读入一个键值的次数。
+Key_reads 从磁盘物理读入一个键值的次数。
+Key_write_requests 请求将一个关键字块写入缓存次数。
+Key_writes 将一个键值块物理写入磁盘的次数。
+Max_used_connections 同时使用的连接的最大数目。
+Not_flushed_key_blocks 在键缓存中已经改变但是还没被清空到磁盘上的键块。
+Not_flushed_delayed_rows 在INSERT DELAY队列中等待写入的行的数量。
+Open_tables 打开表的数量。
+Open_files 打开文件的数量。
+Open_streams 打开流的数量(主要用于日志记载）
+Opened_tables 已经打开的表的数量。
+Questions 发往服务器的查询的数量。
+Slow_queries 要花超过long_query_time时间的查询数量。
+Threads_connected 当前打开的连接的数量。
+Threads_running 不在睡眠的线程数量。
+Uptime 服务器工作了多少秒。
+		</screen>
+	</section>
+	<section id="variables">
+		<title>variables</title>
+		<section id="wait_timeout">
+			<title>wait_timeout</title>
+			<screen>
+			<![CDATA[
+mysql> show global variables like 'wait_timeout';
++----------------------------+-------+
+| Variable_name              | Value |
++----------------------------+-------+
+| wait_timeout               | 10    |
++----------------------------+-------+
+			]]>
+			</screen>
+			<screen>
+			<![CDATA[
+mysql> use mysql;
+Database changed
+
+mysql> set wait_timeout=10;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> show variables  like '%wait_timeout%';
++--------------------------+-------+
+| Variable_name            | Value |
++--------------------------+-------+
+| innodb_lock_wait_timeout | 50    |
+| table_lock_wait_timeout  | 50    |
+| wait_timeout             | 10    |
++--------------------------+-------+
+3 rows in set (0.00 sec)
+			]]>
+			</screen>
+		</section>
+		<section id="table_lock_wait_timeout">
+			<title>table_lock_wait_timeout</title>
+			<screen>
+			<![CDATA[
+mysql> set GLOBAL table_lock_wait_timeout=10;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> show variables  like '%table_lock_wait_timeout%';
++-------------------------+-------+
+| Variable_name           | Value |
++-------------------------+-------+
+| table_lock_wait_timeout | 10    |
++-------------------------+-------+
+1 row in set (0.00 sec)
+			]]>
+			</screen>
+		</section>
+		<section id="low_priority_updates">
+			<title>low_priority_updates</title>
+			<screen>
+			<![CDATA[
+mysql> use mysql
+Database changed
+
+mysql> SET LOW_PRIORITY_UPDATES=1;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> show variables  like '%priority%';
++--------------------------+-------+
+| Variable_name            | Value |
++--------------------------+-------+
+| low_priority_updates     | ON    |
+| sql_low_priority_updates | ON    |
++--------------------------+-------+
+2 rows in set (0.00 sec)
+			]]>
+			</screen>
+		</section>
+		<section id="character_set">
+			<title>character_set</title>
+			<screen>
+			<![CDATA[
+mysql> show variables like 'character%';
++--------------------------+----------------------------+
+| Variable_name            | Value                      |
++--------------------------+----------------------------+
+| character_set_client     | utf8                       |
+| character_set_connection | utf8                       |
+| character_set_database   | utf8                       |
+| character_set_filesystem | binary                     |
+| character_set_results    | utf8                       |
+| character_set_server     | utf8                       |
+| character_set_system     | utf8                       |
+| character_sets_dir       | /usr/share/mysql/charsets/ |
++--------------------------+----------------------------+
+8 rows in set (0.00 sec)
+			]]>
+			</screen>
+		</section>
+		<section id="datadir">
+			<title>datadir</title>
+			<screen>
+ SHOW VARIABLES LIKE 'datadir';
+			</screen>
+			<screen>
+			<![CDATA[
+mysql> SHOW VARIABLES LIKE 'datadir';
++---------------+-------------------------+
+| Variable_name | Value                   |
++---------------+-------------------------+
+| datadir       | /var/lib/mysql/         |
++---------------+-------------------------+
+1 row in set (0.00 sec)
+			]]>
+			</screen>
+		</section>
+		<section id="storage_engine">
+			<title>storage_engine</title>
+			<screen>
+			<![CDATA[
+mysql> show variables like '%storage_engine%';
++------------------------+--------+
+| Variable_name          | Value  |
++------------------------+--------+
+| default_storage_engine | InnoDB |
+| storage_engine         | InnoDB |
++------------------------+--------+
+2 rows in set (0.00 sec)
+			]]>
+			</screen>
+		</section>
+		<section id="timeout">
+			<title>timeout</title>
+			<screen>
+show variables like "%timeout%";
+			</screen>
+		</section>
+	</section>
+	<section id="binary">
+		<title>binary</title>
+		<screen>
+		<![CDATA[
+mysql> show binary logs;
++------------------+-----------+
+| Log_name         | File_size |
++------------------+-----------+
+| mysql-bin.000001 |     19544 |
+| mysql-bin.000002 |    974751 |
+| mysql-bin.000003 |       107 |
+| mysql-bin.000004 |   3976040 |
+| mysql-bin.000005 |       126 |
+| mysql-bin.000006 |    350063 |
+| mysql-bin.000007 |      6826 |
+| mysql-bin.000008 |   3879494 |
+| mysql-bin.000009 |       126 |
+| mysql-bin.000010 |       494 |
+| mysql-bin.000011 |  17286686 |
+| mysql-bin.000012 |  15003942 |
+| mysql-bin.000013 |   1709321 |
++------------------+-----------+
+13 rows in set (0.00 sec)
+		]]>
+		</screen>
+	</section>
+</section>
+
+</chapter>

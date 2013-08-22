@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="security">
+	<title>Security</title>
+	<section id="firewall">
+		<title>Firewall</title>
+		<para>iptables</para>
+		<screen>
+iptables -A INPUT -i eth0 -p tcp -s xxx.xxx.xxx.xxx --dport 3306 -j ACCEPT
+		</screen>
+	</section>
+	<section>
+		<title>保护表字段</title>
+		<para>通过触发器，使之无法修改某些字段的数据，同时不影响修改其他字段。</para>
+		<screen>
+DROP TRIGGER IF EXISTS `members`;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='';
+DELIMITER //
+CREATE TRIGGER `members` BEFORE UPDATE ON `members` FOR EACH ROW BEGIN
+	set new.name 		= old.name;
+	set new.cellphone 	= old.cellphone;
+	set new.email 		= old.email;
+    set new.password 	= old.password;
+END//
+DELIMITER ;
+SET SQL_MODE=@OLD_SQL_MODE;
+		</screen>
+	</section>
+</section>

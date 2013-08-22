@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="miscellaneous">
+	<title>Miscellaneous</title>
+<section>
+	<title>Multi-Master Replication Manager for MySQL</title>
+	<para></para>
+</section>
+	&chapter.handlersocket.xml;
+	&chapter.mariadb.xml;
+	&chapter.maatkit.xml;
+</chapter>

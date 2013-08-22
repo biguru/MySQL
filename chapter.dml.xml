@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id: chapter.dml.xml 627 2013-07-02 07:55:48Z netkiller $ -->
+<chapter id="dml">
+	<title>DML (Data Manipulation Language)</title>
+	<screen>
+SELECT - retrieve data from the a database
+INSERT - insert data into a table
+UPDATE - updates existing data within a table
+DELETE - deletes all records from a table, the space for the records remain
+CALL - call a PL/SQL or Java subprogram
+EXPLAIN PLAN - explain access path to data
+LOCK TABLE - control concurrency
+	</screen>
+	<section id="insert">
+		<title>INSERT</title>
+		<section>
+			<title>INSERT INTO ... SELECT</title>
+			<screen>
+SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='';
+DELIMITER //
+CREATE TRIGGER `members_mobile_insert` BEFORE INSERT ON `members_mobile` FOR EACH ROW BEGIN
+	insert into members_location(id,province,city) select NEW.id,mobile_location.province,mobile_location.city from  mobile_location where mobile_location.id = md5(LEFT(NEW.number, 7));
+END//
+DELIMITER ;
+SET SQL_MODE=@OLDTMP_SQL_MODE;
+			</screen>
+		</section>
+
+	</section>
+</chapter>

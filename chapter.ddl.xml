@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id: chapter.ddl.xml 642 2013-07-19 01:28:13Z netkiller $ -->
+<chapter id="mysql.ddl">
+	<title>DDL - Data Definition Language</title>
+	<section id="ddl.database">
+		<title>Database</title>
+		<section>
+			<title>create</title>
+			<para>Creating a UTF-8 database</para>
+			<screen>
+CREATE DATABASE db_name DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+			</screen>
+			<para>Create a UTF-8 database with binary UTF-8 collation.</para>
+			<programlisting>
+CREATE DATABASE dbname CHARACTER SET utf8 COLLATE utf8_bin;
+			</programlisting>
+		</section>
+		<section>
+			<title>drop</title>
+			<screen>
+DROP DATABASE db_name;
+			</screen>
+		</section>
+		<section>
+			<title>Alter</title>
+			<programlisting>
+ALTER DATABASE dbname DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+			</programlisting>
+		</section>
+		<section>
+			<title>Rename</title>
+			<screen>
+RENAME {DATABASE | SCHEMA} db_name TO new_db_name;
+			</screen>
+			<para>before 5.0 version</para>
+			<screen>
+[neo@development ~]$ mysqldump -uroot -pchen db_old | mysql -uroot -pchen db_new
+			</screen>
+		</section>
+		<section>
+			<title>CHARACTER</title>
+			<screen>
+			<![CDATA[
+ALTER DATABASE <database_name> CHARACTER SET utf8;
+			]]>
+			</screen>
+		</section>
+		<section>
+			<title>show create database</title>
+			<screen>
+			<![CDATA[
+mysql> show create database dbname;
++----------+-------------------------------------------------------------------+
+| Database | Create Database                                                   |
++----------+-------------------------------------------------------------------+
+| dbname   | CREATE DATABASE `dbname` /*!40100 DEFAULT CHARACTER SET utf8 */   |
++----------+-------------------------------------------------------------------+
+1 row in set (0.00 sec)
+			]]>
+			</screen>
+		</section>
+
+	</section>
+	<section id="ddl.table">
+		<title>Table</title>
+		<section>
+			<title>create table ... select</title>
+			<para>创建空表</para>
+			<programlisting>
+			<![CDATA[
+create table admin_user_history select * from admin_user where 1 <> 1;
+			]]>
+			</programlisting>
+			<para>创建有数据的表</para>
+			<programlisting>
+			<![CDATA[
+create table admin_user_history select * from admin_user;
+			]]>
+			</programlisting>
+		</section>
+		<section>
+			<title>modifiy table</title>
+			<para>modifiy table</para>
+			<screen>
+ALTER TABLE ecs_users add user_picture varchar(255);
+			</screen>
+		</section>
+		<section>
+			<title>TEMPORARY Table</title>
+			<para>临时表将在你连接期间存在。一旦断开时将自动删除表并释放所用的空间。你在连接期间删除该表也同样释放空间。</para>
+			<screen>
+CREATE TEMPORARY TABLE tmp_table (
+	key VARCHAR(10) NOT NULL,
+	value INTEGER NOT NULL
+)
+			</screen>
+			<para>声明临时表是一个HEAP表，允许你指定在内存中创建它</para>
+			<screen>
+CREATE TEMPORARY TABLE tmp_mem_table (
+	key VARCHAR(10) NOT NULL,
+	value INTEGER NOT NULL
+) TYPE = HEAP
+			</screen>
+		</section>
+		<section>
+			<title>Collate</title>
+			<programlisting>
+ALTER TABLE `tmp_cats`  COLLATE='utf8_general_ci',  CONVERT TO CHARSET utf8;
+			</programlisting>
+		</section>
+		<section>
+			<title>CHARACTER</title>
+			<screen>
+			<![CDATA[
+ALTER TABLE <table_name> CONVERT TO CHARACTER SET utf8;
+			]]>
+			</screen>
+		</section>
+		<section>
+			<title>DEFAULT</title>
+			<para>更新时间</para>
+			<para>`mtime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更改时间',</para>
+			<screen>
+			<![CDATA[
+CREATE TABLE `bank_account` (
+	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增唯一ID',
+	`bank_name` VARCHAR(255) NOT NULL DEFAULT '0' COMMENT '银行名字(Bank Name)',
+	`name` VARCHAR(50) NOT NULL DEFAULT '0' COMMENT '帐号名称(Name on account)',
+	`account_number` VARCHAR(50) NOT NULL DEFAULT '0' COMMENT '银行帐号(Account Number)',
+	`branch_location` VARCHAR(255) NOT NULL DEFAULT '0' COMMENT '支行位置(Branch Location)',
+	`description` VARCHAR(255) NOT NULL DEFAULT '0' COMMENT '银行描述',
+	`status` ENUM('Y','N') NOT NULL DEFAULT 'N' COMMENT '银行帐号状态',
+	`ctime` DATETIME NOT NULL COMMENT '创建时间',
+	`mtime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更改时间',
+	PRIMARY KEY (`id`)
+)
+COMMENT='银行帐号'
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=2;
+			]]>
+			</screen>
+		</section>
+		<section id="ddl.key">
+			<title>KEY</title>
+			<section>
+				<title>PRIMARY KEY</title>
+				<para>一般主键定义</para>
+				<screen>
+PRIMARY KEY (`id`),
+				</screen>
+				<para>复合主键</para>
+				<screen>
+PRIMARY KEY (`id`, `user_id`),
+				</screen>
+			</section>
+
+		</section>
+		<section>
+			<title>COMMENT</title>
+			<screen>
+ALTER TABLE `neo`.`stuff` COMMENT = '用户表' ;
+ALTER TABLE `neo`.`stuff` CHANGE COLUMN `name` `name` VARCHAR(50) NULL DEFAULT NULL COMMENT '姓名'  ;
+ALTER TABLE `neo`.`stuff` CHANGE COLUMN `password` `password` VARCHAR(50) NULL DEFAULT NULL COMMENT '用户密码' ;
+
+
+CREATE TABLE `stuff` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) DEFAULT NULL COMMENT ''姓名'',
+  `password` varchar(50) DEFAULT NULL COMMENT ''用户密码'',
+  `created` date NOT NULL DEFAULT ''0000-00-00'',
+  PRIMARY KEY (`id`,`created`)
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1 COMMENT=''用户表''
+/*!50100 PARTITION BY HASH (year(created))
+PARTITIONS 10 */
+			</screen>
+		</section>
+	</section>
+
+	<section id="ddl.index">
+		<title>Index</title>
+		<section>
+			<title>SHOW INDEX</title>
+			<programlisting>
+			<![CDATA[
+SHOW INDEX FROM tbl_name
+			]]>
+			</programlisting>
+			<para>垂直显示</para>
+			<programlisting>
+			<![CDATA[
+SHOW INDEX FROM tbl_name\G
+			]]>
+			</programlisting>
+		</section>
+		<section>
+			<title>CREATE INDEX</title>
+			<programlisting>
+CREATE INDEX index_name
+ON table_name (column_name)
+			</programlisting>
+			<para>CREATE UNIQUE INDEX</para>
+			<programlisting>
+CREATE UNIQUE INDEX index_name
+ON table_name (column_name)
+			</programlisting>
+		</section>
+		<section>
+			<title>DROP INDEX</title>
+			<programlisting>
+			<![CDATA[
+DROP INDEX index_name ON tbl_name
+			]]>
+			</programlisting>
+		</section>
+		<section>
+			<title>rebuild</title>
+			<programlisting>
+			<![CDATA[
+SHOW INDEX FROM tbl_name
+alter index IND_PK rebuild;
+			]]>
+			</programlisting>
+		</section>
+	</section>
+	<section id="ddl.key">
+		<title>外键(Foreign Key)</title>
+		<orderedlist>
+			<title>ON DELETE, ON UPDATE 事件触发限制，可选参数： RESTRICT | CASCADE | SET NULL | NO ACTION</title>
+			<listitem><para>RESTRICT（限制外表中的外键改动）</para></listitem>
+			<listitem><para>CASCADE（跟随外键改动）</para></listitem>
+			<listitem><para>SET NULL（设空值）</para></listitem>
+			<listitem><para>SET DEFAULT（设默认值）</para></listitem>
+			<listitem><para>NO ACTION（无动作，默认的）</para></listitem>
+		</orderedlist>
+		<section>
+			<title>FOREIGN KEY (RESTRICT)</title>
+			<screen>
+CREATE TABLE `bank_account_group_has_bank_account` (
+	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`bank_account_group_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+	`bank_account_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+	PRIMARY KEY (`id`),
+	INDEX `FK_bank_account_group_has_bank_account_bank_account` (`bank_account_id`),
+	INDEX `FK_bank_account_group_has_bank_account_bank_account_group` (`bank_account_group_id`),
+	CONSTRAINT `FK_bank_account_group_has_bank_account_bank_account` FOREIGN KEY (`bank_account_id`) REFERENCES `bank_account` (`id`),
+	CONSTRAINT `FK_bank_account_group_has_bank_account_bank_account_group` FOREIGN KEY (`bank_account_group_id`) REFERENCES `bank_account_group` (`id`)
+)
+COMMENT='bank_account_group 与 bank_account 的 N:M 关系'
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=35;
+			</screen>
+		</section>
+	</section>
+	<section id="ddl.view">
+		<title>View</title>
+		<screen>
+CREATE VIEW view_name AS
+SELECT column_name(s)
+FROM table_name
+WHERE condition
+		</screen>
+		<para>update view</para>
+		<programlisting>
+SQL CREATE OR REPLACE VIEW Syntax
+CREATE OR REPLACE VIEW view_name AS
+SELECT column_name(s)
+FROM table_name
+WHERE condition
+		</programlisting>
+	</section>
+	<section id="ddl.trigger">
+		<title>Trigger</title>
+		<section>
+			<title>create trigger</title>
+
+			<para>history</para>
+			<programlisting role="sql">
+			<![CDATA[
+CREATE TABLE user_history SELECT * FROM user WHERE 1 <> 1
+
+DELIMITER //
+CREATE TRIGGER user_history BEFORE update ON user FOR EACH ROW
+BEGIN
+insert into user_history SELECT * FROM user WHERE id = OLD.id;
+END; //
+DELIMITER ;
+			]]>
+			</programlisting>
+		</section>
+		<section>
+			<title>drop trigger</title>
+			<programlisting>
+DROP TRIGGER admin_user_history;
+
+DELIMITER //
+CREATE TRIGGER admin_user_history BEFORE update ON admin_user FOR EACH ROW
+BEGIN
+insert into admin_user_history SELECT * FROM admin_user WHERE user_id = OLD.user_id;
+END; //
+DELIMITER;
+			</programlisting>
+		</section>
+		<section>
+			<title>show triggers</title>
+			<programlisting>
+show triggers;
+			</programlisting>
+		</section>
+		<section>
+			<title>EXAMPLE</title>
+			<example>
+				<title>BEFORE/AFTER</title>
+				<programlisting>
+DROP TRIGGER MY_TEST_MONITOR;
+DELIMITER //
+CREATE TRIGGER MY_TEST_MONITOR BEFORE insert ON MY_TEST FOR EACH ROW
+BEGIN
+	INSERT INTO MY_TEST_MONITOR SELECT * FROM MY_TEST WHERE TICKET = NEW.TICKET;
+END; //
+DELIMITER;
+				</programlisting>
+				<programlisting>
+DROP TRIGGER MY_TEST_MONITOR;
+DELIMITER //
+CREATE TRIGGER MY_TEST_MONITOR AFTER insert ON MY_TEST FOR EACH ROW
+BEGIN
+	INSERT INTO MY_TEST_MONITOR SELECT * FROM MY_TEST WHERE TICKET = NEW.TICKET;
+END; //
+DELIMITER;
+				</programlisting>
+			</example>
+			<example>
+				<title>uuid()</title>
+				<programlisting>
+delimiter $$
+
+CREATE TABLE `member` (
+  `uuid` char(36) NOT NULL,
+  `username` varchar(20) DEFAULT NULL,
+  `password` varchar(32) DEFAULT NULL,
+  PRIMARY KEY (`uuid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8$$
+
+CREATE
+DEFINER=`root`@`%`
+TRIGGER `test`.`member_before_insert`
+BEFORE INSERT ON `test`.`member`
+FOR EACH ROW
+SET new.uuid = uuid()
+$$
+				</programlisting>
+			</example>
+		</section>
+	</section>
+	<section id="ddl.event">
+		<title>EVENT</title>
+		<section>
+			<title>启用 EVENT</title>
+			<programlisting>
+set GLOBAL event_scheduler=ON;
+			</programlisting>
+			<para>my.cnf 配置</para>
+			<screen>
+event_scheduler=on
+			</screen>
+			<para>查看状态</para>
+			<screen>
+			<![CDATA[
+mysql> select @@GLOBAL.event_scheduler;
++--------------------------+
+| @@GLOBAL.event_scheduler |
++--------------------------+
+| ON                       |
++--------------------------+
+1 row in set (0.00 sec)
+
+mysql> SHOW VARIABLES LIKE 'event_scheduler';
++-----------------+-------+
+| Variable_name   | Value |
++-----------------+-------+
+| event_scheduler | ON    |
++-----------------+-------+
+1 row in set (0.01 sec)
+			]]>
+			</screen>
+		</section>
+		<section>
+			<title>创建 EVENT</title>
+			<programlisting>
+			<![CDATA[
+DROP EVENT IF EXISTS `captcha`;
+DELIMITER //
+CREATE DEFINER=`neo`@`%` EVENT `captcha` ON SCHEDULE EVERY 5 MINUTE STARTS '2013-07-08 16:27:03' ON COMPLETION PRESERVE ENABLE DO BEGIN
+	delete from captcha where ctime < DATE_ADD(now(), INTERVAL -5 MINUTE);
+END//
+DELIMITER ;
+			]]>
+			</programlisting>
+		</section>
+		<section>
+			<title>禁用/启用</title>
+			<programlisting>
+ALTER EVENT captcha DISABLE;
+			</programlisting>
+			<programlisting>
+ALTER EVENT captcha ENABLE;
+			</programlisting>
+		</section>
+		<section>
+			<title>show events</title>
+			<programlisting>
+			<![CDATA[
+mysql> show events;
++--------+-------------+---------+-----------+-----------+------------+----------------+----------------+---------------------+------+---------+------------+----------------------+----------------------+--------------------+
+| Db     | Name        | Definer | Time zone | Type      | Execute at | Interval value | Interval field | Starts              | Ends | Status  | Originator | character_set_client | collation_connection | Database Collation |
++--------+-------------+---------+-----------+-----------+------------+----------------+----------------+---------------------+------+---------+------------+----------------------+----------------------+--------------------+
+| hx9999 | captcha     | neo@%   | SYSTEM    | RECURRING | NULL       | 5              | MINUTE         | 2013-07-08 16:27:03 | NULL | ENABLED |          1 | utf8                 | utf8_general_ci      | utf8_general_ci    |
+| hx9999 | sms_ips_log | neo@%   | SYSTEM    | RECURRING | NULL       | '0 5'          | DAY_HOUR       | 2013-07-09 14:39:51 | NULL | ENABLED |          1 | utf8                 | utf8_general_ci      | utf8_general_ci    |
++--------+-------------+---------+-----------+-----------+------------+----------------+----------------+---------------------+------+---------+------------+----------------------+----------------------+--------------------+
+2 rows in set (0.00 sec)
+
+mysql> show events \G;
+*************************** 1. row ***************************
+                  Db: hx9999
+                Name: captcha
+             Definer: neo@%
+           Time zone: SYSTEM
+                Type: RECURRING
+          Execute at: NULL
+      Interval value: 5
+      Interval field: MINUTE
+              Starts: 2013-07-08 16:27:03
+                Ends: NULL
+              Status: ENABLED
+          Originator: 1
+character_set_client: utf8
+collation_connection: utf8_general_ci
+  Database Collation: utf8_general_ci
+*************************** 2. row ***************************
+                  Db: hx9999
+                Name: sms_ips_log
+             Definer: neo@%
+           Time zone: SYSTEM
+                Type: RECURRING
+          Execute at: NULL
+      Interval value: '0 5'
+      Interval field: DAY_HOUR
+              Starts: 2013-07-09 14:39:51
+                Ends: NULL
+              Status: ENABLED
+          Originator: 1
+character_set_client: utf8
+collation_connection: utf8_general_ci
+  Database Collation: utf8_general_ci
+2 rows in set (0.00 sec)
+
+ERROR:
+No query specified
+			]]>
+			</programlisting>
+		</section>
+	</section>
+	&chapter.ddl.partition.xml;
+	&chapter.ddl.engine.xml;
+
+</chapter>
