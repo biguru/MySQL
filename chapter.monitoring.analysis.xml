@@ -26,7 +26,7 @@ mkill -sl 180 -fi 'select.*from bad_table' > /var/log/mkill.out 2> /var/log/mkil
 		<title>innotop</title>
 	</section>
 	<section id="mysqlreport">
-		<title>mysqlreport</title>
+		<title>mysqlreport - A friendly report of important MySQL status values</title>
 		<screen>
 # yum install mysqlreport -y
 		</screen>
@@ -149,6 +149,61 @@ Rows
   Inserted    423.82k     0.2/s
   Read          1.27M     0.5/s
   Updated           0       0/s
+		]]>
+		</screen>
+	</section>
+	<section id="mysqltuner">
+		<title>mysqltuner - MySQL configuration assistant</title>
+		<screen>
+		<![CDATA[
+# mysqltuner
+
+ >>  MySQLTuner 1.1.1 - Major Hayden <major@mhtx.net>
+ >>  Bug reports, feature requests, and downloads at http://mysqltuner.com/
+ >>  Run with '--help' for additional options and output filtering
+[!!] Successfully authenticated with no password - SECURITY RISK!
+
+-------- General Statistics --------------------------------------------------
+[--] Skipped version check for MySQLTuner script
+[OK] Currently running supported MySQL version 5.1.69
+[OK] Operating on 64-bit architecture
+
+-------- Storage Engine Statistics -------------------------------------------
+[--] Status: -Archive -BDB -Federated +InnoDB -ISAM -NDBCluster
+[!!] InnoDB is enabled but isn't being used
+[OK] Total fragmented tables: 0
+
+-------- Security Recommendations  -------------------------------------------
+[!!] User 'root' has no password set.
+[!!] User 'root' has no password set.
+[!!] User 'root' has no password set.
+[!!] User '' has no password set.
+[!!] User '' has no password set.
+
+-------- Performance Metrics -------------------------------------------------
+[--] Up for: 18m 55s (42 q [0.037 qps], 7 conn, TX: 27K, RX: 1K)
+[--] Reads / Writes: 100% / 0%
+[--] Total buffers: 34.0M global + 2.7M per thread (151 max threads)
+[OK] Maximum possible memory usage: 449.2M (45% of installed RAM)
+[OK] Slow queries: 0% (0/42)
+[OK] Highest usage of available connections: 0% (1/151)
+[OK] Key buffer size / total MyISAM indexes: 8.0M/89.0K
+[!!] Query cache is disabled
+[OK] Temporary tables created on disk: 0% (0 on disk / 4 total)
+[!!] Thread cache is disabled
+[OK] Table cache hit rate: 76% (23 open / 30 opened)
+[OK] Open file limit used: 4% (46/1K)
+[OK] Table locks acquired immediately: 100% (19 immediate / 19 locks)
+
+-------- Recommendations -----------------------------------------------------
+General recommendations:
+    Add skip-innodb to MySQL configuration to disable InnoDB
+    MySQL started within last 24 hours - recommendations may be inaccurate
+    Enable the slow query log to troubleshoot bad queries
+    Set thread_cache_size to 4 as a starting value
+Variables to adjust:
+    query_cache_size (>= 8M)
+    thread_cache_size (start at 4)
 		]]>
 		</screen>
 	</section>
