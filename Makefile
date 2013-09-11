@@ -27,6 +27,10 @@ htmlhelp:
 	@iconv -f UTF-8 -t GB18030 -o $(HTMLHELP_DIR)/htmlhelp.hhp < $(HTMLHELP_DIR)/htmlhelp.hhp
 	@iconv -f UTF-8 -t GB18030 -o $(HTMLHELP_DIR)/toc.hhc < $(HTMLHELP_DIR)/toc.hhc
 	
+rpm:
+	rpmbuild -ba --sign ../Miscellaneous/package/package.spec --define "book $(DOCBOOK)"
+	rpm -qpi ~/rpmbuild/RPMS/x86_64/netkiller-$(DOCBOOK)-*.x86_64.rpm
+	rpm -qpl ~/rpmbuild/RPMS/x86_64/netkiller-$(DOCBOOK)-*.x86_64.rpm
 
 clean:
 	rm -rf $(HTML)
