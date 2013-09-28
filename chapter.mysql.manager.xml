@@ -679,6 +679,15 @@ mysql> show variables like '%storage_engine%';
 show variables like "%timeout%";
 			</screen>
 		</section>
+		<section id="max_connections">
+			<title>max_connections</title>
+			<screen>
+show variables like "max_connections";
+			</screen>
+			<screen>
+set global max_connections = 200;
+			</screen>
+		</section>
 	</section>
 	<section id="binary">
 		<title>binary</title>

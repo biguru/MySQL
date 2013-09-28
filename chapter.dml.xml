@@ -25,6 +25,12 @@ DELIMITER ;
 SET SQL_MODE=@OLDTMP_SQL_MODE;
 			</screen>
 		</section>
-
+		<section>
+			<title>INSERT IGNORE</title>
+			<para>INSERT IGNORE 与INSERT INTO的区别就是INSERT IGNORE会忽略数据库中已经存在 的数据，如果数据库没有数据，就插入新的数据，如果有数据的话就跳过这条数据。 </para>
+			<screen>
+insert ignore into table(name)  select  name from table2
+			</screen>
+		</section>
 	</section>
 </chapter>
