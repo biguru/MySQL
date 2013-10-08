@@ -7,7 +7,7 @@ DOCBOOK=mysql
 PUBLIC_HTML=~/public_html
 PROJECT_DIR=$(WORKSPACE)/$(PROJECT)
 HTML_DIR=$(PUBLIC_HTML)/$(DOCBOOK)
-HTMLHELP_DIR=$(PUBLIC_HTML)/htmlhelp/$(DOCBOOK)/chm
+HTMLHELP_DIR=~/htmlhelp/$(DOCBOOK)/chm
 
 all: html htmlhelp
 

@@ -615,4 +615,67 @@ rpl_semi_sync_slave_enabled=1
 			</screen>
 		</section>
 	</section>
+	<section id="multi-master">
+		<title>multi-master replication</title>
+		<para>MySQL 5.7 以上版本才能使用</para>
+		<screen>
+		<![CDATA[
+ master1  ---------> master2
+    ^                   |
+    |                   |
+    |                   |
+    |                   V
+ master4  <--------- master3
+ 		]]>
+		</screen>
+	</section>
+	<section id="multi-source">
+		<title>multi-source replication</title>
+		<para>MySQL 5.7 以上版本才能使用</para>
+		<screen>
+		<![CDATA[
+ master1    master2    master3    master4
+    |          |          |          |
+    |          |          |          |
+    |          |          |          |
+    `--------------------------------'
+                    |
+                    V
+                  Slave
+ 		]]>
+		</screen>
+		<para>slave 配置</para>
+		<screen>
+		<![CDATA[
+slave> change master to master_host="172.16.0.1", master_port=3306, master_user="replication",master_password="password" for channel="master1";
+slave> change master to master_host="172.16.0.2", master_port=3306, master_user="replication",master_password="password" for channel="master2";
+
+slave> start slave for channel="master1";
+slave> start slave for channel="master2";
+		]]>
+		</screen>
+		<para>检查从服务器状态</para>
+		<screen>
+		<![CDATA[
+slave > SHOW SLAVE STATUS FOR CHANNEL="master1"\G
+slave > SHOW SLAVE STATUS FOR CHANNEL="master2"\G		
+		]]>
+		</screen>
+		<para>测试,分别在两个主服务器上创建数据库，然后查看从数据库同步结果.</para>
+		<screen>
+		<![CDATA[
+master1 > create database master1;
+master2 > create database master2;
+
+slave > show databases like 'master%';
++--------------------+
+| Database (master%) |
++--------------------+
+| master1            |
+| master2            |
++--------------------+
+		
+		]]>
+		</screen>
+	</section>
 </section>

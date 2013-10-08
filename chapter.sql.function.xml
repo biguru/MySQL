@@ -104,6 +104,9 @@ update ecs_goods set goods_desc=replace(goods_desc,':8000','');
 
 	<section id="fun.datetime">
 		<title>Date and Time</title>
+		<screen>
+SELECT NOW(),CURRENT_TIMESTAMP(),SYSDATE();		
+		</screen>
 		<section>
 			<title>year/month/day hour:minite:second</title>
 			<screen>
