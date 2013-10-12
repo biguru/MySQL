@@ -306,6 +306,28 @@ PARTITION BY LINEAR KEY (col1)
 PARTITIONS 3;
 		</programlisting>
 	</section>
+	<section id="subpartitioning">
+		<title>Subpartitioning</title>
+		<programlisting>
+CREATE TABLE ts (id INT, purchased DATE)
+    PARTITION BY RANGE( YEAR(purchased) )
+    SUBPARTITION BY HASH( TO_DAYS(purchased) )
+    SUBPARTITIONS 2 (
+        PARTITION p0 VALUES LESS THAN (1990),
+        PARTITION p1 VALUES LESS THAN (2000),
+        PARTITION p2 VALUES LESS THAN MAXVALUE
+    );
+
+CREATE TABLE ts1 (id INT, purchased DATE)
+    PARTITION BY RANGE( YEAR(purchased) )
+    SUBPARTITION BY HASH( MONTH(purchased) )
+    SUBPARTITIONS 2 (
+        PARTITION p0 VALUES LESS THAN (1990),
+        PARTITION p1 VALUES LESS THAN (2000),
+        PARTITION p2 VALUES LESS THAN MAXVALUE
+    );
+		</programlisting>
+	</section>
 	<section>
 		<title>分区管理</title>
 		<section>
