@@ -146,6 +146,24 @@ from product_type_attribute;
 		</screen>
 
 	</section>
+	<section id="sql.union">
+		<title>UNION</title>
+		<para>union 分页问题</para>
+		<programlisting>
+(SELECT a FROM tbl_name_a WHERE a=10 AND B=1)   
+UNION 
+(SELECT a FROM tbl_name_b WHERE a=11 AND B=2) 
+ORDER BY a LIMIT 10; 
+		</programlisting>
+		<programlisting>
+select * from ( 
+	select a from tbl_name_a WHERE a=10 AND B=1 
+	union all 
+	select a from tbl_name_b WHERE a=10 AND B=1
+) tbl_name  
+order by a limit 0,1; 		
+		</programlisting>
+	</section>
 	&chapter.sql.function.xml;
 	&chapter.sql.transactional.xml;
 <section id="sql.mysql">
