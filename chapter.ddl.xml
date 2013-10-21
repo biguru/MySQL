@@ -3,7 +3,7 @@
 <chapter id="mysql.ddl">
 	<title>DDL - Data Definition Language</title>
 	<section id="ddl.database">
-		<title>Database</title>
+		<title>数据库管理(Database)</title>
 		<section>
 			<title>create</title>
 			<para>Creating a UTF-8 database</para>
@@ -62,7 +62,7 @@ mysql> show create database dbname;
 
 	</section>
 	<section id="ddl.table">
-		<title>Table</title>
+		<title>表管理(Table)</title>
 		<section>
 			<title>create table ... select</title>
 			<para>创建空表</para>
@@ -140,6 +140,20 @@ ENGINE=InnoDB
 AUTO_INCREMENT=2;
 			]]>
 			</screen>
+			<section>
+				<title>表存储位置(DATA DIRECTORY)</title>
+				<programlisting>
+				<![CDATA[
+CREATE TABLE IF NOT EXISTS `tab_name` (
+  `id` int(11) DEFAULT NULL,
+  `purchased` date DEFAULT NULL,
+  KEY `Index 1` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+/*!50100 PARTITION BY LIST (YEAR(purchased))
+(PARTITION p0 VALUES IN (1990) DATA DIRECTORY = '/www/data' ENGINE = InnoDB) */;				
+				]]>
+				</programlisting>
+			</section>
 		</section>
 		<section id="ddl.key">
 			<title>KEY</title>
@@ -366,7 +380,9 @@ $$
 				<![CDATA[
 CREATE DEFINER=`neo`@`%` TRIGGER `accounts_angelfund` AFTER INSERT ON `accounts` FOR EACH ROW BEGIN
 	
-	call angelfund(new.name,new.ctime);
+   IF new.paymode = 'angelfund' THEN
+		call angelfund(new.name,new.ctime);		
+   END IF;
 
 END
 
