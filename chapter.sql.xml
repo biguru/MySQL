@@ -17,6 +17,12 @@ SELECT DISTINCT user.name FROM user
 select * from (select count(mobile) as c, mobile from member where length(mobile) >= 11 group by mobile) as m where m.c > 1;
 		</screen>
 	</section>
+	<section id="sql.having">
+		<title>HAVING</title>
+		<programlisting>
+select * from accounts where paymode='alipay' group by name having count(name) >1;		
+		</programlisting>
+	</section>
 	<section id="sql.replace">
 		<title>replace</title>
 		<para>replace into</para>
