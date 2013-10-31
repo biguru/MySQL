@@ -23,12 +23,20 @@ select * from (select count(mobile) as c, mobile from member where length(mobile
 select * from accounts where paymode='alipay' group by name having count(name) >1;		
 		</programlisting>
 	</section>
-	<section id="sql.replace">
-		<title>replace</title>
-		<para>replace into</para>
-		<screen>
-replace into (id) value('1')
-		</screen>
+	<section id="sql.regexp">
+		<title>REGEXP</title>
+		<subtitle>正则匹配</subtitle>
+		<para>判断非数字字符</para>
+		<programlisting>
+select '看89700' regexp '^[0-9]+$'		
+select '89看700' regexp '^[0-9]+$'
+select '89700看' regexp '^[0-9]+$'
+		</programlisting>
+		<para>应用到实际工作中</para>
+		<programlisting>
+select count(*) from accounts a where a.name != '' and not a.name regexp '^[0-9]+$';
+select count(*) from accounts a,members m where  a.member = m.id  and a.name != '' and  not a.name regexp '^[0-9]+$' group by member;		
+		</programlisting>
 	</section>
 	<section id="sql.outfile">
 		<title>OUTFILE/LOAD DATA INFILE</title>

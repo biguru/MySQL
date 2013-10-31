@@ -11,7 +11,7 @@ CALL - call a PL/SQL or Java subprogram
 EXPLAIN PLAN - explain access path to data
 LOCK TABLE - control concurrency
 	</screen>
-	<section id="insert">
+	<section id="dml.insert">
 		<title>INSERT</title>
 		<section>
 			<title>INSERT INTO ... SELECT</title>
@@ -33,4 +33,11 @@ insert ignore into table(name)  select  name from table2
 			</screen>
 		</section>
 	</section>
+	<section id="dml.replace">
+		<title>replace</title>
+		<para>replace into</para>
+		<screen>
+replace into (id) value('1')
+		</screen>
+	</section>	
 </chapter>
