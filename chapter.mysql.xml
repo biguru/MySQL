@@ -5,6 +5,7 @@
 	&chapter.ddl.xml;
 	&chapter.dml.xml;
 	&chapter.sql.xml;
+	&chapter.dcl.xml;
 	&chapter.optimization.xml;
 	&chapter.mysql.connectors.xml;
 	&chapter.miscellaneous.xml;

@@ -16,6 +16,8 @@
 <!ENTITY chapter.sql.function.xml 		SYSTEM "chapter.sql.function.xml">
 <!ENTITY chapter.sql.transactional.xml	SYSTEM "chapter.sql.transactional.xml">
 <!ENTITY chapter.dml.xml 				SYSTEM "chapter.dml.xml">
+<!ENTITY chapter.dcl.xml 				SYSTEM "chapter.dcl.xml">
+
 <!ENTITY chapter.mysql.manager.xml		SYSTEM "chapter.mysql.manager.xml">
 <!ENTITY chapter.backup.xml 			SYSTEM "chapter.backup.xml">
 <!ENTITY chapter.mysql.log.xml	 		SYSTEM "chapter.mysql.log.xml">

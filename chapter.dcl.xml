@@ -8,4 +8,5 @@ SAVEPOINT - identify a point in a transaction to which you can later roll back
 ROLLBACK - restore database to original since the last COMMIT
 SET TRANSACTION - Change transaction options like what rollback segment to use
 	</screen>
+	&chapter.sql.transactional.xml;
 </chapter>

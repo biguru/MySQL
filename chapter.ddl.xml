@@ -366,6 +366,16 @@ BEGIN
 END; //
 DELIMITER;
 					</programlisting>
+					<para>通过触发器保护数据，防止重复插入数据</para>
+					<programlisting>
+CREATE DEFINER=`neo`@`%` TRIGGER `members_before_insert` BEFORE INSERT ON `members` FOR EACH ROW BEGIN
+	IF new.username IS NOT NULL THEN
+		IF exists(select m.username from members m where m.username = new.username) THEN
+	   	set new.username = '';
+		END IF;
+	END IF;
+END					
+					</programlisting>
 				</example>
 
 			</section>

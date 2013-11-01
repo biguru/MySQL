@@ -20,7 +20,7 @@ select * from (select count(mobile) as c, mobile from member where length(mobile
 	<section id="sql.having">
 		<title>HAVING</title>
 		<programlisting>
-select * from accounts where paymode='alipay' group by name having count(name) >1;		
+select * from accounts where paymode='alipay' group by name having count(name) >1;
 		</programlisting>
 	</section>
 	<section id="sql.regexp">
@@ -28,16 +28,74 @@ select * from accounts where paymode='alipay' group by name having count(name) >
 		<subtitle>正则匹配</subtitle>
 		<para>判断非数字字符</para>
 		<programlisting>
-select '看89700' regexp '^[0-9]+$'		
+select '看89700' regexp '^[0-9]+$'
 select '89看700' regexp '^[0-9]+$'
 select '89700看' regexp '^[0-9]+$'
 		</programlisting>
 		<para>应用到实际工作中</para>
 		<programlisting>
 select count(*) from accounts a where a.name != '' and not a.name regexp '^[0-9]+$';
-select count(*) from accounts a,members m where  a.member = m.id  and a.name != '' and  not a.name regexp '^[0-9]+$' group by member;		
+select count(*) from accounts a,members m where  a.member = m.id  and a.name != '' and  not a.name regexp '^[0-9]+$' group by member;
+SELECT * FROM tablename WHERE SUBSTRING(fieldname, 1, 1) REGEXP '[[:digit:]]';
 		</programlisting>
 	</section>
+	<section id="sql.in">
+		<title>IN / NOT IN</title>
+		<programlisting>
+select * from members where id in ('1','100','1000');
+select * from members where group_id in (select id from members_group);
+		</programlisting>
+	</section>
+	<section>
+		<title>ALL / Any</title>
+		<para><![CDATA[NOT IN 与 <> ALL 两个语句是相同的：]]></para>
+		<programlisting>
+		<![CDATA[
+SELECT s1 FROM t1 WHERE s1 <> ALL (SELECT s1 FROM t2);
+SELECT s1 FROM t1 WHERE s1 NOT IN (SELECT s1 FROM t2);
+		]]>
+		</programlisting>
+		<para>IN 与 "＝ANY" 两个语句是一样的：</para>
+		<programlisting>
+SELECT s1 FROM t1 WHERE s1 = ANY (SELECT s1 FROM t2);
+SELECT s1 FROM t1 WHERE s1 IN    (SELECT s1 FROM t2);
+		</programlisting>
+		<example>
+			<title>SQL ANY example</title>
+			<programlisting>
+			<![CDATA[
+select * from members where id = any(select members_id from accounts where id < 100);
+			]]>
+			</programlisting>			
+		</example>
+	</section>
+	<section id="sql.exists">
+		<title>exists, not exists</title>
+		<programlisting>
+SELECT c.id, companyname
+FROM customers c  
+WHERE EXISTS(
+    SELECT orderid FROM orders o WHERE o.customer_id = cu.id)  
+		</programlisting>
+	</section>
+	<section id="sql.union">
+		<title>UNION</title>
+		<para>union 分页问题</para>
+		<programlisting>
+(SELECT a FROM tbl_name_a WHERE a=10 AND B=1)
+UNION
+(SELECT a FROM tbl_name_b WHERE a=11 AND B=2)
+ORDER BY a LIMIT 10;
+		</programlisting>
+		<programlisting>
+select * from (
+	select a from tbl_name_a WHERE a=10 AND B=1
+	union all
+	select a from tbl_name_b WHERE a=10 AND B=1
+) tbl_name
+order by a limit 0,1;
+		</programlisting>
+	</section>	
 	<section id="sql.outfile">
 		<title>OUTFILE/LOAD DATA INFILE</title>
 		<para>查询结果输出到文件</para>
@@ -79,7 +137,18 @@ FROM products
 			</screen>
 		</section>
 	</section>
-	<section id="sql.92">
+	&chapter.sql.function.xml;
+<section id="sql.mysql">
+	<title>MySQL 专有命令</title>
+	<section id="sql_no_cache">
+		<title>SQL_NO_CACHE</title>
+		<screen>
+SELECT /*!40001 SQL_NO_CACHE */ * FROM table
+		</screen>
+	</section>
+</section>
+
+<section id="sql.92">
 		<title>SQL 92</title>
 
 			<para>insert + select</para>
@@ -160,33 +229,6 @@ from product_type_attribute;
 		</screen>
 
 	</section>
-	<section id="sql.union">
-		<title>UNION</title>
-		<para>union 分页问题</para>
-		<programlisting>
-(SELECT a FROM tbl_name_a WHERE a=10 AND B=1)   
-UNION 
-(SELECT a FROM tbl_name_b WHERE a=11 AND B=2) 
-ORDER BY a LIMIT 10; 
-		</programlisting>
-		<programlisting>
-select * from ( 
-	select a from tbl_name_a WHERE a=10 AND B=1 
-	union all 
-	select a from tbl_name_b WHERE a=10 AND B=1
-) tbl_name  
-order by a limit 0,1; 		
-		</programlisting>
-	</section>
-	&chapter.sql.function.xml;
-	&chapter.sql.transactional.xml;
-<section id="sql.mysql">
-	<title>MySQL 专有命令</title>
-	<section id="sql_no_cache">
-		<title>SQL_NO_CACHE</title>
-		<screen>
-SELECT /*!40001 SQL_NO_CACHE */ * FROM table
-		</screen>
-	</section>
-</section>
+
+
 </chapter>
