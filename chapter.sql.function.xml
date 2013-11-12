@@ -317,7 +317,13 @@ mysql> select datediff('2008-08-08 12:00:00', '2008-08-01 00:00:00');
 			]]>
 			</screen>
 		</section>
-
-
+	</section>
+	<section id="truncate">
+		<title>truncate 保留小数位数</title>
+		<programlisting>
+		<![CDATA[
+select profit, deficit, concat(truncate((profit / deficit)*100,2),'%') as percentage from ((select count(*) as profit from angelfund where profit > 0) as profit, (select count(*) as deficit from angelfund where profit < 0) as deficit);		
+		]]>		
+		</programlisting>
 	</section>
 </section>
