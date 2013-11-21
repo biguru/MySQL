@@ -8,5 +8,101 @@ SAVEPOINT - identify a point in a transaction to which you can later roll back
 ROLLBACK - restore database to original since the last COMMIT
 SET TRANSACTION - Change transaction options like what rollback segment to use
 	</screen>
-	&chapter.sql.transactional.xml;
+<section>
+	<title>锁</title>
+	<para>锁机制</para>
+	<screen>
+    1) 共享锁：由读表操作加上的锁，加锁后其他用户只能获取该表或行的共享锁，不能获取排它锁，也就是说只能读不能写
+    2) 排它锁：由写表操作加上的锁，加锁后其他用户不能获取该表或行的任何锁，典型是mysql事务中的
+
+    锁的范围:
+    行锁: 对某行记录加上锁
+    表锁: 对整个表加上锁
+	</screen>
+	<para>共享锁(share mode), 排他锁(for update) </para>
+
+	<section>
+		<title>排他锁</title>
+		<para>下面做作一个实验，验证锁的效果</para>
+		<para>终端一,首先进入事务状态然后运行下面语句</para>
+		<screen>
+		<![CDATA[
+mysql> begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> select * from t1 where id='3' for update;
++----+--------+---------------------+---------------------+
+| id | name   | ctime               | mtime               |
++----+--------+---------------------+---------------------+
+|  3 | test   | 0000-00-00 00:00:00 | 2013-01-14 13:05:41 |
++----+--------+---------------------+---------------------+
+1 row in set (0.00 sec)
+		]]>
+		</screen>
+		<para>终端二, 查询表中数据</para>
+		<screen>
+		<![CDATA[
+mysql> select * from t1;
++----+--------+---------------------+---------------------+
+| id | name   | ctime               | mtime               |
++----+--------+---------------------+---------------------+
+|  1 | neo    | 0000-00-00 00:00:00 | 2013-01-14 13:00:00 |
+|  2 | zen    | 0000-00-00 00:00:00 | 2013-01-14 13:00:43 |
+|  3 | test   | 0000-00-00 00:00:00 | 2013-01-14 13:05:41 |
++----+--------+---------------------+---------------------+
+3 rows in set (0.00 sec)
+		]]>
+		</screen>
+		<para>增加“for update”查询非锁定记录</para>
+		<screen>
+		<![CDATA[
+mysql> select * from t1 where id=2 for update;
++----+------+---------------------+---------------------+
+| id | name | ctime               | mtime               |
++----+------+---------------------+---------------------+
+|  2 | zen  | 0000-00-00 00:00:00 | 2013-01-14 13:00:43 |
++----+------+---------------------+---------------------+
+1 row in set (0.00 sec)
+		]]>
+		</screen>
+		<para>查询被锁定记录</para>
+		<screen>
+		<![CDATA[
+mysql> select * from t1 where id=3 for update;
+ERROR 1205 (HY000): Lock wait timeout exceeded; try restarting transaction
+		]]>
+		</screen>
+		<para>查询所有记录，因为记录中包含了id=3那条，所以也不允许查询。</para>
+		<screen>
+		<![CDATA[
+mysql> select * from t1 for update;
+ERROR 1205 (HY000): Lock wait timeout exceeded; try restarting transaction
+		]]>
+		</screen>
+		<para>测试修改记录</para>
+		<screen>
+		<![CDATA[
+mysql> UPDATE `t1` SET `name`='testaa' WHERE  `id`=3;
+ERROR 1205 (HY000): Lock wait timeout exceeded; try restarting transaction
+		]]>
+		</screen>
+		<tip>
+			<para>在没有出现ERROR 1205 (HY000)的这段时间，只要终端一中执行commit,rollback锁就释放了.终端二中的语句就会运行。</para>
+			<para>select trx_query from information_schema.innodb_trx; 可以查看被锁的SQL语句</para>
+		</tip>
+	</section>
+	<section>
+		<title>表的加锁与解锁</title>
+		<screen>
+LOCK TABLES tablename WRITE;
+LOCK TABLES tablename READ;
+
+...
+...
+
+UNLOCK TABLES;
+		</screen>
+	</section>
+</section>
+	&chapter.dcl.transactional.xml;
 </chapter>
