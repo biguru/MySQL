@@ -10,7 +10,7 @@
     隔离性：一个事务的执行不能被其他事务干扰。即一个事务内部的操作及使用的数据对其他事务是隔离的，并发执行的各个事务之间互相不干扰。
     持久性：一个事务一旦成功提交，对数据库中数据的修改就是持久性的。接下来其他的其他操作或故障不应该对其执行结果有任何影响。
 	</screen>
-	<screen>
+	<section>
 		<title>事务隔离级别</title>
 		<para>事务隔离模式</para>
 		<screen>
@@ -32,11 +32,11 @@ serializable模式中，事务被强制为依次执行。这是SQL标准建议�
 		<screen>
 SELECT @@global.tx_isolation;
 SELECT @@tx_isolation;
-		</screen>		
+		</screen>
 		<screen>
 查看InnoDB系统级别的事务隔离级别：
 mysql> SELECT @@global.tx_isolation;
- 
+
 查看InnoDB会话级别的事务隔离级别：
 mysql> SELECT @@tx_isolation;
 
@@ -44,9 +44,9 @@ mysql> SELECT @@tx_isolation;
 mysql> set global transaction isolation level read committed;
 
 修改InnoDB会话级别的事务隔离级别：
-mysql> set session transaction isolation level read committed;		
+mysql> set session transaction isolation level read committed;
 		</screen>
-	</screen>
+	</section>
 	<section>
 		<title>事务所用到的表</title>
 		<para>information_schema</para>
@@ -57,5 +57,186 @@ select * from innodb_lock_waits;
 select * from innodb_locks;
 		]]>
 		</screen>
+	</section>
+	<section id="transaction.update">
+		<title>解决更新冲突</title>
+		<programlisting>
+CREATE TABLE `account` (
+	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`user` VARCHAR(50) NOT NULL DEFAULT '0',
+	`cash` FLOAT NOT NULL DEFAULT '0',
+	`point` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+	PRIMARY KEY (`id`),
+	UNIQUE INDEX `user` (`user`)
+)
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB;
+		</programlisting>
+		<programlisting>
+INSERT INTO `test`.`account` (`user`, `cash`,`point`) VALUES ('neo', 10,10);
+		</programlisting>
+		<para>下面通过account表，我来模拟一个返点场景，例如电商网站经常会用到“返点”，购买一定数量的商品赠送一定的点数，可以通过点数买东西，这样涉及到点的加于减操作。</para>
+		<table>
+		   <title>更新丢失演示</title>
+		   <tgroup cols="2">
+		     <thead>
+		       <row>
+		          <entry>Session A</entry>
+		          <entry>Session B</entry>
+		       </row>
+		     </thead>
+		   <tbody>
+	        <row>
+				<entry>
+					<programlisting>
+select point into @point from account where user='neo';
+					</programlisting>
+				</entry>
+		        <entry>
+
+		        </entry>
+		     </row>
+		     <row>
+		        <entry>
+
+		        </entry>
+		        <entry>
+					<programlisting>
+select point into @point from account where user='neo';
+					</programlisting>
+		        </entry>
+		     </row>
+		     <row>
+		        <entry>
+					<programlisting>
+update account set point=@point+20 where user='neo';
+					</programlisting>
+		        </entry>
+		        <entry>
+
+		        </entry>
+		     </row>
+		     <row>
+		        <entry>
+
+		        </entry>
+		        <entry>
+					<programlisting>
+update account set point=@point+50 where user='neo';
+					</programlisting>
+		        </entry>
+		     </row>
+		    </tbody>
+			</tgroup>
+		</table>
+		<para>看看最后用户有多少点？</para>
+		<screen>
+		<![CDATA[
+mysql> select point from account where user='neo';
++-------+
+| point |
++-------+
+|    30 |
++-------+
+1 row in set (0.00 sec)
+		]]>
+		</screen>
+		<para>傻了吧，老板发火，测试不能重现，运维说这是程序计算错误，程序员说程序没有错误，这样的场景国内很多公司都出现过吧？</para>
+		<para>问题出在哪里呢？出在并发上，很多web程序员很少考虑并发是产生的问题，怎么解决？很多方案，在我的职业生涯过程就见过很多奇葩方案，都能解决问题但不太完美。</para>
+		<para>如果更新语句改为 update account set point=@point+50 where user='neo' and point=@point; 会更保险,但仍然不能解决同意时间所产生的更新操作</para>
+		<para>下面是通过事务与锁彻底解决上面的问题。</para>
+		<screen>
+		<![CDATA[
+mysql> SELECT @@tx_isolation;
++-----------------+
+| @@tx_isolation  |
++-----------------+
+| REPEATABLE-READ |
++-----------------+
+1 row in set (0.00 sec)		
+		]]>
+		</screen>
+		<para>检查事务隔离级别为：REPEATABLE-READ</para>
+		<table>
+		   <title>防止更新丢失加锁演示</title>
+		   <tgroup cols="2">
+		     <thead>
+		       <row>
+		          <entry>Session A</entry>
+		          <entry>Session B</entry>
+		       </row>
+		     </thead>
+		   <tbody>
+	        <row>
+				<entry>
+					<programlisting>
+begin;
+select point into @point from account where user='neo' for update;
+					</programlisting>
+				</entry>
+		        <entry>
+
+		        </entry>
+		     </row>
+		     <row>
+		        <entry>
+
+		        </entry>
+		        <entry>
+					<programlisting>
+begin;
+select point into @point from account where user='neo' for update;
+					</programlisting>
+					<para>执行到此处会挂起</para>
+		        </entry>
+		     </row>
+		     <row>
+		        <entry>
+					<programlisting>
+update account set point=@point+20 where user='neo';
+commit;
+					</programlisting>
+		        </entry>
+		        <entry>
+
+		        </entry>
+		     </row>
+		     <row>
+		        <entry>
+
+		        </entry>
+		        <entry>
+					<programlisting>
+update account set point=@point+50 where user='neo';
+commit;
+					</programlisting>
+		        </entry>
+		     </row>
+		    </tbody>
+			</tgroup>
+		</table>
+		<para>上面解决更新覆盖问题，但从数据库设计角度是不应该这样设计表的。仅供参考</para>
+		<programlisting>
+CREATE TABLE `account` (
+	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`user` VARCHAR(50) NOT NULL DEFAULT '0',
+	`cash` FLOAT NOT NULL DEFAULT '0',
+	`point` INT(10) NOT NULL DEFAULT '0',
+	PRIMARY KEY (`id`)
+)
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB;
+		</programlisting>
+		<para>每一次数据变化新增一条数据</para>
+		<programlisting>
+INSERT INTO `test`.`account` (`user`, `point`) VALUES ('neo', -10);
+INSERT INTO `test`.`account` (`user`, `point`) VALUES ('neo', -5);
+INSERT INTO `test`.`account` (`user`, `point`) VALUES ('neo', 30);
+INSERT INTO `test`.`account` (`user`, `point`) VALUES ('neo', -20);
+		</programlisting>
+		<para>计算剩余点数</para>
+		<programlisting>
+select sum(point) as point from account where user='neo';
+		</programlisting>
 	</section>
 </section>
