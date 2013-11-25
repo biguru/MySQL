@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<section id="sql.transactional">
+<section id="dcl.transactional">
 	<title>事务处理和锁定语句</title>
 	<subtitle>Transactional and Locking Statements</subtitle>
 	<para>开始事务 begin、start transaction 或者 set autocommit=0</para>

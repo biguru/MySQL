@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- $Id: chapter.sql.function.xml 555 2013-04-07 09:54:05Z netkiller $ -->
-<section id="sql.functions">
+<chapter id="index"><?dbhtml dir="functions"?>
 	<title>Functions and Operators</title>
-	<section id="fun.count">
+	<section id="count">
 		<title>COUNT</title>
 		<para>count()</para>
 		<screen>
@@ -11,15 +11,15 @@ SELECT (SELECT count(1) FROM ecs_category) as 'Export category count',
 	(SELECT count(1) FROM ecs_goods_attr) as 'Attr count';
 		</screen>
 	</section>
-	<section id="fun.uuid">
+	<section id="uuid">
 		<title>UUID()</title>
 		<programlisting>
 SELECT UUID(),LENGTH(UUID()),UUID_SHORT(), LENGTH(UUID_SHORT());
 		</programlisting>
 	</section>
-	<section id="fun.string">
+	<section id="string">
 		<title>String</title>
-		<section id="fun.left">
+		<section id="left">
 			<title>LEFT/RIGHT</title>
 			<para>LEFT(str,len)</para>
 			<screen>
@@ -42,7 +42,7 @@ mysql> select right(concat('0000000','1'),5) as number;
 1 row in set (0.00 sec)
 			</screen>
 		</section>
-		<section id="fun.rpad">
+		<section id="rpad">
 			<title>RPAD/LPAD</title>
 			<para>补齐长度用'0'填充</para>
 			<command>RPAD(str,len,padstr)</command>
@@ -66,7 +66,7 @@ mysql> select lpad('10',5,'0') as txt;
 1 row in set (0.00 sec)
 			</screen>
 		</section>
-		<section id="fun.concat">
+		<section id="concat">
 			<title>CONCAT</title>
 			<para>CONCAT(str1,str2,...) </para>
 			<screen>
@@ -79,7 +79,7 @@ mysql> select concat('Neo',' ','Chen') as Name;
 1 row in set (0.00 sec)
 			</screen>
 		</section>
-		<section id="fun.group_concat">
+		<section id="group_concat">
 			<title>GROUP_CONCAT</title>
 			<para></para>
 			<screen>
@@ -92,7 +92,7 @@ mysql> select GROUP_CONCAT(CONVERT( username , CHAR (16)) order by username desc
 6 rows in set, 1 warning (0.01 sec)
 			</screen>
 		</section>
-		<section id="fun.replace">
+		<section id="replace">
 			<title>replace</title>
 			<screen>
 select replace(goods_desc,':8000','') from ecs_goods;
@@ -102,7 +102,7 @@ update ecs_goods set goods_desc=replace(goods_desc,':8000','');
 		</section>
 	</section>
 
-	<section id="fun.datetime">
+	<section id="datetime">
 		<title>Date and Time</title>
 		<screen>
 SELECT NOW(),CURRENT_TIMESTAMP(),SYSDATE();		
@@ -326,4 +326,4 @@ select profit, deficit, concat(truncate((profit / deficit)*100,2),'%') as percen
 		]]>		
 		</programlisting>
 	</section>
-</section>
+</chapter>

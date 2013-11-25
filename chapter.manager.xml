@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- $Id: chapter.mysql.manager.xml 656 2013-08-05 09:41:22Z netkiller $ -->
-<chapter id="mysql.administration">
+<chapter id="index"><?dbhtml dir="administration"?>
 	<title>Database Administration</title>
-	<section id="mysql.user">
+	<section id="user">
 		<title>User Account Management</title>
 		<section>
 			<title>Create User</title>
@@ -69,7 +69,7 @@ shell>mysqladmin -u root flush-privileges password "newpassword"
 			</screen>
 		</section>
 	</section>
-	<section id="mysql.privilege">
+	<section id="privilege">
 		<title>Access Privilege System</title>
 		<screen>
 global privileges
@@ -323,7 +323,7 @@ SHOW TABLE STATUS LIKE 'members';
 	</section>
 
 
-<section id="mysql.show">
+<section id="show">
 	<title>SHOW COMMAND</title>
 	<screen>
 SHOW DATABASES;
@@ -337,7 +337,7 @@ Show global variables;
 Show full processlist;
 	</screen>
 
-	<section id="mysql.version">
+	<section id="version">
 		<title>查看版本</title>
 		<para>Server</para>
 		<screen>
@@ -716,5 +716,5 @@ mysql> show binary logs;
 		</screen>
 	</section>
 </section>
-
+	&chapter.backup.xml;
 </chapter>

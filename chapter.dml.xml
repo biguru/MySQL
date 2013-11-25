@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- $Id: chapter.dml.xml 627 2013-07-02 07:55:48Z netkiller $ -->
-<chapter id="dml">
+<chapter id="index"><?dbhtml dir="dml"?>
 	<title>DML (Data Manipulation Language)</title>
 	<screen>
 SELECT - retrieve data from the a database
@@ -11,7 +11,7 @@ CALL - call a PL/SQL or Java subprogram
 EXPLAIN PLAN - explain access path to data
 LOCK TABLE - control concurrency
 	</screen>
-	<section id="dml.insert">
+	<section id="insert">
 		<title>INSERT</title>
 		<section>
 			<title>INSERT INTO ... SELECT</title>
@@ -33,7 +33,7 @@ insert ignore into table(name)  select  name from table2
 			</screen>
 		</section>
 	</section>
-	<section id="dml.replace">
+	<section id="replace">
 		<title>replace</title>
 		<para>replace into</para>
 		<screen>

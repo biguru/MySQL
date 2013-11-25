@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- $Id: chapter.sql.xml 514 2013-01-14 10:20:12Z netkiller $ -->
-<chapter id="sql">
+<chapter id="index"><?dbhtml dir="sql"?>
 	<title>SQL Statement Syntax</title>
 	<subtitle>Structured Query Language</subtitle>
-	<section id="sql.distinct">
+	<section id="distinct">
 		<title>DISTINCT</title>
 		<para>SELECT DISTINCT user.name FROM user</para>
 		<screen>
 SELECT DISTINCT user.name FROM user
 		</screen>
 	</section>
-	<section id="sql.groupby">
+	<section id="groupby">
 		<title>group by</title>
 		<para>统计重复的手机号吗</para>
 		<screen>
 select * from (select count(mobile) as c, mobile from member where length(mobile) >= 11 group by mobile) as m where m.c > 1;
 		</screen>
 	</section>
-	<section id="sql.having">
+	<section id="having">
 		<title>HAVING</title>
 		<programlisting>
 select * from accounts where paymode='alipay' group by name having count(name) >1;
 		</programlisting>
 	</section>
-	<section id="sql.regexp">
+	<section id="regexp">
 		<title>REGEXP</title>
 		<subtitle>正则匹配</subtitle>
 		<para>判断非数字字符</para>
@@ -39,14 +39,14 @@ select count(*) from accounts a,members m where  a.member = m.id  and a.name != 
 SELECT * FROM tablename WHERE SUBSTRING(fieldname, 1, 1) REGEXP '[[:digit:]]';
 		</programlisting>
 	</section>
-	<section id="sql.in">
+	<section id="in">
 		<title>IN / NOT IN</title>
 		<programlisting>
 select * from members where id in ('1','100','1000');
 select * from members where group_id in (select id from members_group);
 		</programlisting>
 	</section>
-	<section>
+	<section id="any">
 		<title>ALL / Any</title>
 		<para><![CDATA[NOT IN 与 <> ALL 两个语句是相同的：]]></para>
 		<programlisting>
@@ -69,7 +69,7 @@ select * from members where id = any(select members_id from accounts where id < 
 			</programlisting>			
 		</example>
 	</section>
-	<section id="sql.exists">
+	<section id="exists">
 		<title>exists, not exists</title>
 		<programlisting>
 SELECT c.id, companyname
@@ -78,7 +78,7 @@ WHERE EXISTS(
     SELECT orderid FROM orders o WHERE o.customer_id = cu.id)  
 		</programlisting>
 	</section>
-	<section id="sql.union">
+	<section id="union">
 		<title>UNION</title>
 		<para>union 分页问题</para>
 		<programlisting>
@@ -96,7 +96,7 @@ select * from (
 order by a limit 0,1;
 		</programlisting>
 	</section>	
-	<section id="sql.outfile">
+	<section id="outfile">
 		<title>OUTFILE/LOAD DATA INFILE</title>
 		<para>查询结果输出到文件</para>
 		<screen>
@@ -124,7 +124,7 @@ SELECT * INTO OUTFILE '/home/mark/Orders.txt'
 LOAD DATA INFILE 'data.txt' INTO TABLE db2.my_table;
 		]]>
 		</screen>
-		<section id="sql.outfile.csv">
+		<section id="outfile.csv">
 			<title>Export data to CSV from MySQL</title>
 			<screen>
 SELECT *
@@ -137,7 +137,7 @@ FROM products
 			</screen>
 		</section>
 	</section>
-	&chapter.sql.function.xml;
+	
 <section id="sql.mysql">
 	<title>MySQL 专有命令</title>
 	<section id="sql_no_cache">
@@ -227,8 +227,7 @@ from user_point_history,user where user_point_history.user_id = user.id) as user
 select product_type_attribute.*,(select 'selected' from product_type_attribute_set where product_type_attribute_set.product_type_attribute_id = product_type_attribute.id and product_type_attribute_set.product_type_id = 26) as selected
 from product_type_attribute;
 		</screen>
-
 	</section>
-
-
 </chapter>
+
+	&chapter.sql.function.xml;

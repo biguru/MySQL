@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- $Id: chapter.mysql.utility.xml 530 2013-03-10 07:21:55Z netkiller $ -->
-<chapter id="utility">
+<chapter id="index"><?dbhtml dir="client"?>
 	<title>Client and Utility Programs</title>
 	<info>
 		<keywordset>
@@ -125,7 +125,7 @@ Bye
 			</screen>
 		</section>
 	</section>
-	<section id="mysql.mysqldump">
+	<section id="mysqldump">
 		<title>mysqldump - a database backup program</title>
 		<screen>
 		<![CDATA[
@@ -194,7 +194,7 @@ mysqldump -hlocalhost -umysql -ppasswd database table --where="id>128"
 			</screen>
 		</section>
 	</section>
-	<section id="mysql.mysqladmin">
+	<section id="mysqladmin">
 		<title>mysqladmin - client for administering a MySQL server</title>
 		<section>
 			<title>reload</title>
@@ -536,7 +536,7 @@ mysql -u root -pneo -S /tmp/mysql.sock -e "show full processlist;"|grep -v Sleep
 			</screen>
 		</section>
 	</section>
-	<section id="mysql.myisamchk">
+	<section id="myisamchk">
 		<title>myisamchk — MyISAM Table-Maintenance Utility</title>
 		<para>先停止mysqld，在--datadir目录运行</para>
 		<screen>
@@ -557,7 +557,7 @@ myisamchk -r /var/lib/mysql/*.MYI
 0 * * 0 /usr/bin/myisamchk -s /var/lib/mysql/*/*.MYI
 		</screen>
 	</section>
-	<section id="mysql.mysqlcheck">
+	<section id="mysqlcheck">
 		<title>mysqlcheck — A Table Maintenance and Repair Program</title>
 		<para>即可最佳化所有db </para>
 		<screen>
@@ -572,7 +572,7 @@ mysqlcheck -A -o -r -p
 		</screen>
 	</section>
 
-	<section id="mysql.mysqlslap">
+	<section id="mysqlslap">
 		<title>mysqlslap - load emulation client</title>
 		<screen>
 –auto-generate-sql, -a

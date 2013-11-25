@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- $Id: chapter.server.xml 641 2013-07-18 10:16:30Z netkiller $ -->
-<chapter id="server">
+<chapter id="index"><?dbhtml dir="server"?>
 	<title>MySQL Server</title>
 	&chapter.server.install.xml;
 	<section id="my.cnf">

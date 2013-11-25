@@ -1,12 +1,11 @@
 	&chapter.server.xml;
-	&chapter.mysql.utility.xml;
-	&chapter.backup.xml;
-	&chapter.mysql.manager.xml;
+	&chapter.client.xml;
+	&chapter.manager.xml;
 	&chapter.ddl.xml;
 	&chapter.dml.xml;
 	&chapter.sql.xml;
 	&chapter.dcl.xml;
 	&chapter.optimization.xml;
-	&chapter.mysql.connectors.xml;
+	&chapter.connectors.xml;
 	&chapter.miscellaneous.xml;
-	&chapter.mysql.faq.xml;
+	&chapter.faq.xml;

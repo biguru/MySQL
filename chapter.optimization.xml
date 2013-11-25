@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- $Id: chapter.optimization.xml 572 2013-04-24 05:37:11Z netkiller $ -->
-<chapter id="optimization">
+<chapter id="index"><?dbhtml dir="optimization"?>
 	<title>Optimization</title>
 	<section id="cache">
 		<title>Buffering and Caching</title>

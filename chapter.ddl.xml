@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- $Id: chapter.ddl.xml 642 2013-07-19 01:28:13Z netkiller $ -->
-<chapter id="mysql.ddl">
+<chapter id="index"><?dbhtml dir="ddl"?>
 	<title>DDL - Data Definition Language</title>
-	<section id="ddl.database">
+	<section id="database">
 		<title>数据库管理(Database)</title>
 		<section>
 			<title>create</title>
@@ -61,7 +61,7 @@ mysql> show create database dbname;
 		</section>
 
 	</section>
-	<section id="ddl.table">
+	<section id="table">
 		<title>表管理(Table)</title>
 		<section>
 			<title>create table ... select</title>
@@ -175,7 +175,7 @@ CREATE TABLE IF NOT EXISTS `tab_name` (
 				</programlisting>
 			</section>
 		</section>
-		<section id="ddl.key">
+		<section id="key">
 			<title>KEY</title>
 			<section>
 				<title>PRIMARY KEY</title>
@@ -211,7 +211,7 @@ PARTITIONS 10 */
 		</section>
 	</section>
 
-	<section id="ddl.index">
+	<section id="index">
 		<title>Index</title>
 		<section>
 			<title>SHOW INDEX</title>
@@ -257,7 +257,7 @@ alter index IND_PK rebuild;
 			</programlisting>
 		</section>
 	</section>
-	<section id="ddl.key">
+	<section id="key">
 		<title>外键(Foreign Key)</title>
 		<orderedlist>
 			<title>ON DELETE, ON UPDATE 事件触发限制，可选参数： RESTRICT | CASCADE | SET NULL | NO ACTION</title>
@@ -287,7 +287,7 @@ AUTO_INCREMENT=35;
 			</screen>
 		</section>
 	</section>
-	<section id="ddl.view">
+	<section id="view">
 		<title>View</title>
 		<screen>
 CREATE VIEW view_name AS
@@ -304,7 +304,7 @@ FROM table_name
 WHERE condition
 		</programlisting>
 	</section>
-	<section id="ddl.trigger">
+	<section id="trigger">
 		<title>Trigger</title>
 		<section>
 			<title>create trigger</title>
@@ -443,7 +443,7 @@ END
 			</section>
 		</section>
 	</section>
-	<section id="ddl.event">
+	<section id="event">
 		<title>EVENT</title>
 		<section>
 			<title>启用 EVENT</title>
