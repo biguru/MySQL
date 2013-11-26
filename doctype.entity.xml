@@ -6,8 +6,6 @@
 <!ENTITY chapter.replication.xml		SYSTEM "chapter.replication.xml">
 <!ENTITY chapter.cluster.xml			SYSTEM "chapter.cluster.xml">
 <!ENTITY chapter.proxy.xml				SYSTEM "chapter.proxy.xml">
-<!ENTITY chapter.security.xml			SYSTEM "chapter.security.xml">
-
 <!ENTITY chapter.client.xml 			SYSTEM "chapter.client.xml">
 
 <!ENTITY chapter.ddl.xml				SYSTEM "chapter.ddl.xml">

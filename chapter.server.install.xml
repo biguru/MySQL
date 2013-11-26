@@ -272,4 +272,11 @@ $ sudo apt-get install mysql-admin
 mysql-query-browser --query="SELECT * FROM users"
 		</screen>
 	</section>
+	<section id="firewall">
+		<title>Firewall</title>
+		<para>iptables</para>
+		<screen>
+iptables -A INPUT -i eth0 -p tcp -s xxx.xxx.xxx.xxx --dport 3306 -j ACCEPT
+		</screen>
+	</section>	
 </section>

@@ -398,6 +398,5 @@ interactive-timeout
 	&chapter.replication.xml;
 	&chapter.cluster.xml;
 	&chapter.proxy.xml;
-	&chapter.security.xml;
 	&chapter.monitoring.xml;
 </chapter>
