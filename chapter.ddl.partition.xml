@@ -554,8 +554,8 @@ PARTITIONS 7 */
 	<section>
 		<title>INFORMATION_SCHEMA.partitions 表</title>
 
-			<programlisting>
-			<![CDATA[
+		<programlisting>
+		<![CDATA[
 SELECT
   partition_name part,
   partition_expression expr,
@@ -566,10 +566,10 @@ FROM
 WHERE
   TABLE_SCHEMA = schema()
   AND TABLE_NAME='employees';
-			]]>
-			</programlisting>
-			<programlisting>
-			<![CDATA[
+		]]>
+		</programlisting>
+		<programlisting>
+		<![CDATA[
 select
   partition_name part,
   partition_expression expr,
@@ -580,11 +580,7 @@ INFORMATION_SCHEMA.partitions
 WHERE
     TABLE_SCHEMA = 'test'
     AND TABLE_NAME='t2';
-			]]>
-			</programlisting>
-	</section>
-	<section>
-		<title>ERROR 1503 (HY000): A PRIMARY KEY must include all columns in the table's partitioning function</title>
-		<ulink url="http://dev.mysql.com/doc/refman/5.1/en/partitioning-limitations-partitioning-keys-unique-keys.html" />
+		]]>
+		</programlisting>
 	</section>
 </section>

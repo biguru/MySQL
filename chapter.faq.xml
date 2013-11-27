@@ -80,4 +80,8 @@ source /tmp/kill.sql;
 mysqladmin -uroot -p processlist | grep Sleep |awk '{if (length($2) > 1) print "Kill "$2}'|xargs mysqladmin -uroot kill
 		</screen>
 	</section>
+	<section id="error.1503">
+		<title>ERROR 1503 (HY000): A PRIMARY KEY must include all columns in the table's partitioning function</title>
+		<ulink url="http://dev.mysql.com/doc/refman/5.1/en/partitioning-limitations-partitioning-keys-unique-keys.html" />
+	</section>	
 </chapter>

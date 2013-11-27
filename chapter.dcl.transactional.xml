@@ -239,4 +239,27 @@ INSERT INTO `test`.`account` (`user`, `point`) VALUES ('neo', -20);
 select sum(point) as point from account where user='neo';
 		</programlisting>
 	</section>
+	<section id="savepoint">
+		<title>SAVEPOINT</title>
+		<programlisting>
+DROP PROCEDURE IF EXISTS doOrder;
+
+DELIMITER $$
+
+CREATE PROCEDURE doOrder(IN orderUUID VARCHAR(40))
+  BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION ROLLBACK TO sp_order;
+
+    START TRANSACTION;
+    SAVEPOINT sp_order;
+
+    -- doing my updates and selects here...
+
+    COMMIT;
+
+  END $$
+
+DELIMITER ;
+		</programlisting>
+	</section>
 </section>
