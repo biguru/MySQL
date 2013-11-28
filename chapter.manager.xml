@@ -285,6 +285,25 @@ GRANT USAGE ON *.* TO ...
 			]]>
 			</programlisting>
 		</section>
+		<section>
+			<title>Table Privileges</title>
+			<para>授权tmp用户只能访问tabname表</para>
+			<programlisting>
+GRANT ALL PRIVILEGES ON tmp.tabname TO 'tmp'@'%' IDENTIFIED BY 'chen' WITH GRANT OPTION;
+			</programlisting>
+			<para>如果用户已经存在仅仅是分配权限可以使用下面方法</para>			
+			<programlisting>
+GRANT ALL ON mydb.mytbl TO 'someuser'@'somehost';
+GRANT SELECT, INSERT ON mydb.mytbl TO 'someuser'@'somehost';			
+			</programlisting>
+		</section>
+		<section>
+			<title>Column Privileges</title>
+			<para>mydb.mytbl 表 col1字段允许查询，col1,col2允许插入</para>
+			<programlisting>
+GRANT SELECT (col1), INSERT (col1,col2) ON mydb.mytbl TO 'someuser'@'somehost';			
+			</programlisting>
+		</section>
 	</section>
 	<section id="maintenance">
 		<title>Maintenance 数据库维护</title>
