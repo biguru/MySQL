@@ -1,18 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section id="show">
 	<title>SHOW COMMAND</title>
-	<screen>
-SHOW DATABASES;
-SHOW TABLE STATUS FROM `db`;
-SHOW FUNCTION STATUS WHERE `Db`='db';
-SHOW PROCEDURE STATUS WHERE `Db`='db';
-SHOW TRIGGERS FROM `db`;
-
-Show Global Status;
-Show global variables;
-Show full processlist;
-	</screen>
-
 	<section id="version">
 		<title>查看版本</title>
 		<para>Server</para>
@@ -63,6 +51,7 @@ mysql  Ver 14.12 Distrib 5.0.77, for redhat-linux-gnu (x86_64) using readline 5.
 		<programlisting>
 		<![CDATA[
 mysql> show status;
+mysql> show global status;
 		]]>
 		</programlisting>
 
@@ -183,6 +172,9 @@ mysql> SHOW PLUGINS;
 	<section id="show.processlist">
 		<title>show processlist</title>
 		<screen>
+show full processlist;
+		</screen>
+		<screen>
 命令： show processlist;
 如果是root帐号，你能看到所有用户的当前连接。如果是其它普通帐号，只能看到自己占用的连接。
 show processlist;只列出前100条，如果想全列出请使用show full processlist;
@@ -226,6 +218,9 @@ Uptime 服务器工作了多少秒。
 	</section>
 	<section id="variables">
 		<title>variables</title>
+		<screen>
+show global variables;
+		</screen>
 		<section id="wait_timeout">
 			<title>wait_timeout</title>
 			<screen>
@@ -391,6 +386,42 @@ mysql> show binary logs;
 		]]>
 		</screen>
 	</section>
+	<section id="databases">
+		<title>DATABASES</title>
+		<screen>
+SHOW DATABASES;
+		</screen>
+	</section>
+	<section id="table">
+		<title>TABLE</title>
+		<screen>
+SHOW TABLE STATUS FROM `dbname`;
+		</screen>
+	</section>
+	<section id="function">
+		<title>FUNCTION</title>
+		<screen>
+SHOW FUNCTION STATUS WHERE `Db`='dbname';
+		</screen>
+	</section>
+	<section id="procedure">
+		<title>PROCEDURE</title>
+		<screen>
+SHOW PROCEDURE STATUS WHERE `Db`='dbname';
+		</screen>
+	</section>
+	<section id="triggers">
+		<title>TRIGGERS</title>
+		<screen>
+SHOW TRIGGERS FROM `dbname`;
+		</screen>
+	</section>
+	<section id="events">
+		<title>EVENTS</title>
+		<screen>
+SHOW EVENTS FROM `dbname`;
+		</screen>
+	</section>
 	<section id="engines">
 		<title>引擎(ENGINES)</title>
 		<screen>
@@ -410,7 +441,7 @@ mysql> SHOW ENGINES;
 | InnoDB             | DEFAULT | Supports transactions, row-level locking, and foreign keys     | YES          | YES  | YES        |
 +--------------------+---------+----------------------------------------------------------------+--------------+------+------------+
 9 rows in set (0.00 sec)
-		
+
 		]]>
 		</screen>
 	</section>
@@ -619,7 +650,7 @@ mysql> SHOW COLLATION;
 | cp932_bin                | cp932    |  96 |         | Yes      |       1 |
 | eucjpms_japanese_ci      | eucjpms  |  97 | Yes     | Yes      |       1 |
 | eucjpms_bin              | eucjpms  |  98 |         | Yes      |       1 |
-+--------------------------+----------+-----+---------+----------+---------+		
++--------------------------+----------+-----+---------+----------+---------+
 		]]>
 		</screen>
 	</section>
