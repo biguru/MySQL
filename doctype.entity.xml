@@ -3,6 +3,7 @@
 <!ENTITY chapter.mysql.xml				SYSTEM "chapter.mysql.xml">
 <!ENTITY chapter.server.xml 			SYSTEM "chapter.server.xml">
 <!ENTITY chapter.server.install.xml 	SYSTEM "chapter.server.install.xml">
+<!ENTITY chapter.server.status.xml 		SYSTEM "chapter.server.status.xml">
 <!ENTITY chapter.replication.xml		SYSTEM "chapter.replication.xml">
 <!ENTITY chapter.cluster.xml			SYSTEM "chapter.cluster.xml">
 <!ENTITY chapter.proxy.xml				SYSTEM "chapter.proxy.xml">

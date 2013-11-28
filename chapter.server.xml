@@ -399,4 +399,5 @@ interactive-timeout
 	&chapter.cluster.xml;
 	&chapter.proxy.xml;
 	&chapter.monitoring.xml;
+	&chapter.server.status.xml;
 </chapter>
