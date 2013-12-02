@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <chapter id="index"><?dbhtml dir="miscellaneous"?>
 	<title>Miscellaneous</title>
-<section>
+<section id="mmm">
 	<title>Multi-Master Replication Manager for MySQL</title>
 	<para></para>
+</section>
+<section id="mha">
+	<title>MHA</title>
+	<para><ulink url="https://code.google.com/p/mysql-master-ha/" /></para>
 </section>
 	&chapter.handlersocket.xml;
 	&chapter.mariadb.xml;
