@@ -10,6 +10,5 @@
 	<para><ulink url="https://code.google.com/p/mysql-master-ha/" /></para>
 </section>
 	&chapter.handlersocket.xml;
-	&chapter.mariadb.xml;
 	&chapter.maatkit.xml;
 </chapter>

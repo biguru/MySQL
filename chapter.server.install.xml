@@ -272,11 +272,19 @@ $ sudo apt-get install mysql-admin
 mysql-query-browser --query="SELECT * FROM users"
 		</screen>
 	</section>
+	<section>
+		<title>Installing MySQL on Linux Using the MySQL Yum Repository</title>
+		<para>http://dev.mysql.com/doc/mysql-repo-excerpt/5.6/en/linux-installation-yum-repo.html</para>
+		<screen>
+yum localinstall http://dev.mysql.com/get/mysql-community-release-el6-5.noarch.rpm
+		</screen>
+	</section>
+	&chapter.mariadb.xml;
 	<section id="firewall">
 		<title>Firewall</title>
 		<para>iptables</para>
 		<screen>
 iptables -A INPUT -i eth0 -p tcp -s xxx.xxx.xxx.xxx --dport 3306 -j ACCEPT
 		</screen>
-	</section>	
+	</section>
 </section>
