@@ -654,4 +654,17 @@ mysql> SHOW COLLATION;
 		]]>
 		</screen>
 	</section>
+	<section id="show.grants">
+		<title>SHOW GRANTS</title>
+		<screen>
+MariaDB [test]> SHOW GRANTS;
++----------------------------------------------------------------------------------------------------------------------------------------+
+| Grants for root@localhost                                                                                                              |
++----------------------------------------------------------------------------------------------------------------------------------------+
+| GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY PASSWORD '*C6325DAF39AE6CC34E960D3C65F1398FE467E1D0' WITH GRANT OPTION |
+| GRANT PROXY ON ''@'' TO 'root'@'localhost' WITH GRANT OPTION                                                                           |
++----------------------------------------------------------------------------------------------------------------------------------------+
+2 rows in set (0.00 sec)		
+		</screen>
+	</section>
 </section>
