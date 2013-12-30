@@ -11,4 +11,10 @@
 </section>
 	&chapter.handlersocket.xml;
 	&chapter.maatkit.xml;
+	<section id="Mroonga">
+		<title>Mroonga</title>
+		<subtitle>Mroonga 是一个 MySQL 存储引擎，基于 Groonga，提供完整的全文搜索引擎。Groonga 是一款可嵌入式的全文搜寻引擎,具有储存功能和全文搜寻的检索功能。</subtitle>
+		<para>http://mroonga.org/</para>
+		<para>http://groonga.org/</para>
+	</section>
 </chapter>
