@@ -100,6 +100,20 @@ select replace(goods_desc,':8000','') from ecs_goods;
 update ecs_goods set goods_desc=replace(goods_desc,':8000','');
 			</screen>
 		</section>
+		<section id="substring">
+			<title>SUBSTRING</title>
+			<screen>
+			<![CDATA[
+mysql> SELECT SUBSTRING('netkiller',4,4);   
++----------------------------+
+| SUBSTRING('netkiller',4,4) |
++----------------------------+
+| kill                       |
++----------------------------+
+1 row in set (0.00 sec)			
+			]]>
+			</screen>
+		</section>
 	</section>
 
 	<section id="datetime">
@@ -318,12 +332,55 @@ mysql> select datediff('2008-08-08 12:00:00', '2008-08-01 00:00:00');
 			</screen>
 		</section>
 	</section>
-	<section id="truncate">
-		<title>truncate 保留小数位数</title>
-		<programlisting>
-		<![CDATA[
+	<section id="numeric">
+		<title>数值函数</title>
+		<section>
+			<title>cast 类型转换</title>
+			<programlisting>
+			<![CDATA[
+mysql> SELECT cast(SUBSTRING('123456789',1,4) as UNSIGNED) * 100;   
++----------------------------------------------------+
+| cast(SUBSTRING('123456789',1,4) as UNSIGNED) * 100 |
++----------------------------------------------------+
+|                                             123400 |
++----------------------------------------------------+
+1 row in set (0.00 sec)		
+			]]>
+			</programlisting>
+		</section>
+	
+		<section id="truncate">
+			<title>truncate 保留小数位数</title>
+			<programlisting>
+			<![CDATA[
 select profit, deficit, concat(truncate((profit / deficit)*100,2),'%') as percentage from ((select count(*) as profit from angelfund where profit > 0) as profit, (select count(*) as deficit from angelfund where profit < 0) as deficit);		
-		]]>		
-		</programlisting>
+			]]>		
+			</programlisting>
+		
+		</section>
+		<section>
+			<title>MOD 求余</title>
+			<screen>
+			<![CDATA[
+mysql> select 9 mod 5;
++---------+
+| 9 mod 5 |
++---------+
+|       4 |
++---------+
+1 row in set (0.00 sec)
+
+mysql> select mod(5,2);
++----------+
+| mod(5,2) |
++----------+
+|        1 |
++----------+
+1 row in set (0.00 sec)
+
+mysql> select mod(5,2);			
+			]]>
+			</screen>
+		</section>
 	</section>
 </chapter>
