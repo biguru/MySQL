@@ -329,6 +329,21 @@ mysql> SHOW VARIABLES LIKE 'datadir';
 			]]>
 			</screen>
 		</section>
+		<section id="plugin_dir">
+			<title>plugin_dir</title>
+			<command>show variables like '%plugin_dir%';</command>
+			<screen>
+			<![CDATA[
+mysql> show variables like '%plugin_dir%';
++---------------+------------------------+
+| Variable_name | Value                  |
++---------------+------------------------+
+| plugin_dir    | /usr/lib/mysql/plugin/ |
++---------------+------------------------+
+1 row in set (0.00 sec)
+			]]>
+			</screen>
+		</section>
 		<section id="storage_engine">
 			<title>storage_engine</title>
 			<screen>
@@ -664,7 +679,7 @@ MariaDB [test]> SHOW GRANTS;
 | GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY PASSWORD '*C6325DAF39AE6CC34E960D3C65F1398FE467E1D0' WITH GRANT OPTION |
 | GRANT PROXY ON ''@'' TO 'root'@'localhost' WITH GRANT OPTION                                                                           |
 +----------------------------------------------------------------------------------------------------------------------------------------+
-2 rows in set (0.00 sec)		
+2 rows in set (0.00 sec)
 		</screen>
 	</section>
 </section>
