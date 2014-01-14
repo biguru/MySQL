@@ -95,6 +95,15 @@ select * from (
 ) tbl_name
 order by a limit 0,1;
 		</programlisting>
+		<section>
+			<title>UNION ALL</title>
+			<para>UNION ALL 不会合并重复的记录</para>
+			<programlisting>
+select a,b from tbl_name_a WHERE a=10 AND B=1
+union all
+select a,b from tbl_name_b WHERE a=10 AND B=1			
+			</programlisting>
+		</section>
 	</section>	
 	<section id="outfile">
 		<title>OUTFILE/LOAD DATA INFILE</title>
