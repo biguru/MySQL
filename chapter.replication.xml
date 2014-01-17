@@ -39,9 +39,9 @@ mysql> SHOW GLOBAL VARIABLES like 'server_id';
 +---------------+-------+
 | server_id     | 1     |
 +---------------+-------+
-1 row in set (0.00 sec)					
+1 row in set (0.00 sec)
 					]]>
-					</screen>					
+					</screen>
 				</step>
 				<step>
 					<para>登录slave服务器，测试主库3306工作情况，如果看到下面相关信息表示工作正常。</para>
@@ -140,12 +140,30 @@ mysql> CHANGE MASTER TO
     ->     MASTER_LOG_POS=recorded_log_position;
 	   				]]>
 					</screen>
-					<para>CHANGE MASTER TO MASTER_HOST='192.168.245.129', MASTER_USER='replication', MASTER_PASSWORD='slavepass';</para>
+					<para>如果是全新服务器，空数据库可以忽略MASTER_LOG_FILE与MASTER_LOG_POS</para>
+					<screen>
+CHANGE MASTER TO MASTER_HOST='192.168.245.129', MASTER_USER='replication', MASTER_PASSWORD='slavepass';
+					</screen>
+					<para>如果是复制已经存在的数据库需要MASTER_LOG_FILE与MASTER_LOG_POS选项</para>
+					<para>首先到Master上运行 show master status 找到File与Position</para>
 					<screen>
 					<![CDATA[
-mysql> CHANGE MASTER TO MASTER_HOST='192.168.245.129', MASTER_USER='repl', MASTER_PASSWORD='slavepass';
-Query OK, 0 rows affected (0.14 sec)
+mysql> show master status \G
+*************************** 1. row ***************************
+            File: mysql-bin.000009
+        Position: 3988
+    Binlog_Do_DB:
+Binlog_Ignore_DB:
+1 row in set (0.00 sec)
 					]]>
+					</screen>
+					<screen>
+CHANGE MASTER TO
+     MASTER_HOST='192.168.2.1',
+     MASTER_USER='replication',
+     MASTER_PASSWORD='kJZBTo3BjMx9AnmD9Ryn',
+     MASTER_LOG_FILE='mysql-bin.000009',
+     MASTER_LOG_POS=3988;
 					</screen>
 				</step>
 
@@ -404,20 +422,6 @@ grant SELECT ON your_user.* to yourdb@'your_host' identified by 'password' with 
 			</screen>
 			<para>从库必须收回写操作</para>
 		</section>
-		<section id="replication.error">
-			<title>主从不同步问题</title>
-			<para>执行下面语句</para>
-			<screen>
-stop slave;
-set global sql_slave_skip_counter =1 ;
-start slave;
-			</screen>
-			<para>Seconds_Behind_Master 值从NULL变为大于等于0是表示已经同步</para>
-			<screen>
-Seconds_Behind_Master: NULL
-Seconds_Behind_Master: 8893
-			</screen>
-		</section>
 	</section>
 
 	<section id="master.master">
@@ -559,26 +563,10 @@ Slave_SQL_Running: Yes
 		</section>
 	</section>
 
-	<section id="replication.error">
-		<title>与复制有关的问题</title>
-
-		<section id="replication.expire-logs-days">
-			<title>mysql-bin 清理问题</title>
-			<para>缺省expire-logs-days为30天。这里设为7天，可根据自己情况调整。</para>
-			<screen>
-[mysqld]
-expire-logs-days = 7
-			</screen>
-			<para>通过SQL删除</para>
-			<screen>
-删除某个日志：	mysql>PURGE MASTER LOGS TO ‘mysql-bin.015′;
-删除某天前的日志：	mysql>PURGE MASTER LOGS BEFORE ’2010-10-25  14:00:00′;
-			</screen>
-		</section>
-		<section>
-			<title>Semisynchronous Replication</title>
-			<screen>
-			<![CDATA[
+	<section id="semisynchronous">
+		<title>Semisynchronous Replication</title>
+		<screen>
+		<![CDATA[
 mysql> SHOW VARIABLES LIKE "have_dynamic_loading";
 +----------------------+-------+
 | Variable_name        | Value |
@@ -588,33 +576,37 @@ mysql> SHOW VARIABLES LIKE "have_dynamic_loading";
 1 row in set (0.00 sec)
 
 mysql>
-			]]>
-			</screen>
-			<screen>
+		]]>
+		</screen>
+		<para>Master 配置</para>
+		<screen>
 master  > INSTALL PLUGIN rpl_semi_sync_master SONAME ‘libsemisync_master.so’;
-slave-x > INSTALL PLUGIN rpl_semi_sync_slave SONAME ‘libsemisync_slave.so’;
 master  > SET GLOBAL rpl_semi_sync_master_enabled=1;
+		</screen>
+		<para>Slave 配置</para>
+		<screen>
+slave-x > INSTALL PLUGIN rpl_semi_sync_slave SONAME ‘libsemisync_slave.so’;
 slave-x > SET GLOBAL rpl_semi_sync_slave_enabled=1;
-			</screen>
-			<screen>
+		</screen>
+		<screen>
 CREATE USER 'replication'@'192.168.1.%' IDENTIFIED BY 'password';
 GRANT ALL PRIVILEGES ON *.* TO 'replication'@'192.168.1.%' IDENTIFIED BY 'password' WITH GRANT OPTION MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0 ;
-			</screen>
-			<para>master_heartbeat_period</para>
-			<screen>
+		</screen>
+		<para>master_heartbeat_period</para>
+		<screen>
 STOP SLAVE;
 CHANGE MASTER TO master_heartbeat_period= milliseconds;
 START SLAVE;
-			</screen>
-			<screen>
+		</screen>
+		<screen>
 mysql> CHANGE MASTER TO MASTER_HOST='xxx.xxx.xxx.xxx', MASTER_USER='root', MASTER_PASSWORD='password', MASTER_PORT=3306, MASTER_CONNECT_RETRY=10, MASTER_LOG_FILE='mysql-bin.000004', MASTER_LOG_POS=107;
-			</screen>
-			<para>跳过出问题的MySQL实例</para>
-			<screen>
+		</screen>
+		<para>跳过出问题的MySQL实例</para>
+		<screen>
 CHANGE MASTER TO MASTER_HOST=xxx.xxx.xxx.xxx IGNORE_SERVER_IDS=y
-			</screen>
-			<para>编辑my.cnf加入</para>
-			<screen>
+		</screen>
+		<para>编辑my.cnf加入</para>
+		<screen>
 # On Master
 [mysqld]
 rpl_semi_sync_master_enabled=1
@@ -623,8 +615,7 @@ rpl_semi_sync_master_timeout=1000 # 1 second
 # On Slave
 [mysqld]
 rpl_semi_sync_slave_enabled=1
-			</screen>
-		</section>
+		</screen>
 	</section>
 	<section id="multi-master">
 		<title>multi-master replication</title>
@@ -669,7 +660,7 @@ slave> start slave for channel="master2";
 		<screen>
 		<![CDATA[
 slave > SHOW SLAVE STATUS FOR CHANNEL="master1"\G
-slave > SHOW SLAVE STATUS FOR CHANNEL="master2"\G		
+slave > SHOW SLAVE STATUS FOR CHANNEL="master2"\G
 		]]>
 		</screen>
 		<para>测试,分别在两个主服务器上创建数据库，然后查看从数据库同步结果.</para>
@@ -685,8 +676,59 @@ slave > show databases like 'master%';
 | master1            |
 | master2            |
 +--------------------+
-		
+
 		]]>
 		</screen>
+	</section>
+	<section id="replication.error">
+		<title>与复制有关的问题</title>
+		<section id="replication.error">
+			<title>主从不同步问题</title>
+			<para>执行下面语句</para>
+			<screen>
+stop slave;
+set global sql_slave_skip_counter =1 ;
+start slave;
+
+mysql> slave stop;
+mysql> set GLOBAL SQL_SLAVE_SKIP_COUNTER=1;
+mysql> slave start;
+			</screen>
+
+			<para>Seconds_Behind_Master 值从NULL变为大于等于0是表示已经同步</para>
+			<screen>
+Seconds_Behind_Master: NULL
+Seconds_Behind_Master: 8893
+			</screen>
+		</section>
+		<section id="replication.expire-logs-days">
+			<title>mysql-bin 清理问题</title>
+			<para>缺省expire-logs-days为30天。这里设为7天，可根据自己情况调整。</para>
+			<screen>
+[mysqld]
+expire-logs-days = 7
+			</screen>
+			<para>通过SQL删除</para>
+			<screen>
+删除某个日志：	mysql>PURGE MASTER LOGS TO ‘mysql-bin.015′;
+删除某天前的日志：	mysql>PURGE MASTER LOGS BEFORE ’2010-10-25  14:00:00′;
+			</screen>
+		</section>
+		<section>
+			<title>跳过 Last_Errno</title>
+			<para>修改mysql配置文件 /etc/my.cnf 在 [mysqld]下加一行</para>
+			<screen>
+[mysqld]
+slave_skip_errors = 1062
+			</screen>
+		</section>
+		<section>
+			<title>重置Slave</title>
+			<screen>
+STOP SLAVE; 
+RESET SLAVE; 
+START SLAVE;			
+			</screen>
+		</section>
 	</section>
 </section>

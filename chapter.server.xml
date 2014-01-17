@@ -18,7 +18,7 @@ bind-address = 0.0.0.0
 [mysqld]
 skip-networking
 			</screen>
-		</section>		
+		</section>
 		<section>
 			<title>配置字符集</title>
 			<subtitle>Configuring Database Character Encoding</subtitle>
@@ -233,19 +233,36 @@ interactive_timeout=30
 			<para>(1)interactive_timeout 参数含义：服务器关闭交互式连接前等待活动的秒数。	参数默认值：28800秒（8小时）</para>
 			<para>(2)wait_timeout 参数含义：服务器关闭非交互连接之前等待活动的秒数。</para>
 		</section>
-		<section>
+		<section id="replication">
 			<title>与复制有关的参数</title>
 			<section>
-				<title>定义 log-bin 文件名</title>
+				<title>用于主库的选项 Master</title>
+				<para>定义 log-bin 文件名</para>
 				<screen>
 log-bin=mysql-bin
 				</screen>
-			</section>
-			<section>
-				<title>expire-logs-days</title>
-				<para>bin log 保留时间</para>
+				<para>binlog 保留时间, 过期天数设置</para>
 				<screen>
 expire-logs-days = 30
+				</screen>
+				<para></para>
+				<screen>
+binlog-do-db=需要复制的数据库名
+binlog-ignore-db=不需要复制的数据库					
+				</screen>
+			</section>
+			<section>
+				<title>用于从库的选项 Slave </title>
+				<screen>
+replicate-do-db= 指定需要复制的数据库
+replicate-ignore-db= 忽略复制的数据库
+				</screen>
+			</section>
+			<section>
+				<title>逃过错误</title>
+				<para>主从复制经常遇到 Last_Errno: 1062 可以使用下面配置跳过</para>
+				<screen>
+slave_skip_errors=1062				
 				</screen>
 			</section>
 		</section>
@@ -262,6 +279,30 @@ OPTIMIZE TABLE tbl_name;
 			<para>临时开启</para>
 			<screen>
 SET @@global.innodb_file_per_table = 1;
+			</screen>
+		</section>
+		<section>
+			<title>EVENT 设置</title>
+			<para>开启EVENT定时任务</para>
+			<screen>
+event_scheduler=on			
+			</screen>
+		</section>
+		<section>
+			<title>日志</title>
+			<para>操作日志</para>
+			<screen>
+log = mysql.log			
+			</screen>
+			<para>慢查询日志</para>
+			<screen>
+log-slow-queries = slow.log
+long_query_time = 5			
+			</screen>
+			<para>错误日志</para>
+			<screen>
+[mysqld_safe]
+log-error=/var/log/mysqld.log			
 			</screen>
 		</section>
 		<section>
