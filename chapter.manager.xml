@@ -116,6 +116,7 @@ UPDATE	Enable use of UPDATE
 USAGE	Synonym for “no privileges”
 		</screen>
 		<ulink url="http://dev.mysql.com/doc/refman/5.5/en/grant.html#grant-table-privileges" />
+		<para>REPLICATION CLIENT 与 REPLICATION SLAVE区别，前者只能使用SHOW MASTER STATUS和SHOW SLAVE STATUS命令监控复制状态，后者才能从主库复制binlog.</para>
 		<section>
 			<title>SHOW GRANTS</title>
 			<screen>

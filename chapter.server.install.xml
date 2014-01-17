@@ -278,6 +278,20 @@ mysql-query-browser --query="SELECT * FROM users"
 		<screen>
 yum localinstall http://dev.mysql.com/get/mysql-community-release-el6-5.noarch.rpm
 		</screen>
+		<para>安装MySQL Server</para>
+		<screen>
+yum install mysql-server
+chkconfig mysqld on
+service mysqld start		
+		</screen>
+		<para>修改root密码</para>
+		<screen>
+mysqladmin -u root password 'new-password'		
+		</screen>
+		<para>安全设置向导</para>
+		<screen>
+/usr/bin/mysql_secure_installation		
+		</screen>
 	</section>
 	&chapter.mariadb.xml;
 	<section id="firewall">

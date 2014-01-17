@@ -31,6 +31,17 @@ neo@netkiller:~$ sudo /etc/init.d/mysql reload
  * Reloading MySQL database server mysqld          [ OK ]
 					</screen>
 					<para>建议使用reload,如果不起作用再用restart</para>
+					<screen>
+					<![CDATA[
+mysql> SHOW GLOBAL VARIABLES like 'server_id';
++---------------+-------+
+| Variable_name | Value |
++---------------+-------+
+| server_id     | 1     |
++---------------+-------+
+1 row in set (0.00 sec)					
+					]]>
+					</screen>					
 				</step>
 				<step>
 					<para>登录slave服务器，测试主库3306工作情况，如果看到下面相关信息表示工作正常。</para>
@@ -49,12 +60,12 @@ I
 					<para>创建账户并授予REPLICATION SLAVE权限</para>
 					<screen>
 					<![CDATA[
-mysql> GRANT REPLICATION SLAVE ON *.* TO 'replication'@'%.mydomain.com' IDENTIFIED BY 'slavepass';
+mysql> GRANT REPLICATION SLAVE,REPLICATION CLIENT ON *.* TO 'replication'@'%.mydomain.com' IDENTIFIED BY 'slavepass';
 mysql> FLUSH PRIVILEGES;
 					]]>
 					</screen>
-					<para>GRANT REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO replication@'192.168.245.131' IDENTIFIED BY 'slavepass'</para>
-
+					<para>创建监控账号monitor（可选项），monitor 使用SHOW MASTER STATUS和SHOW SLAVE STATUS命令但没有复制权限</para>
+					<para>GRANT REPLICATION CLIENT ON *.* TO monitor@'192.168.245.131' IDENTIFIED BY 'monitorpass'</para>
 				</step>
 				<step>
 					<para>锁表禁止写入新数据</para>
