@@ -193,6 +193,28 @@ LOCK TABLES `tbl_name` WRITE;
 mysqldump -hlocalhost -umysql -ppasswd database table --where="id>128"
 			</screen>
 		</section>
+		<section>
+			<title>注释信息--comments /--skip-comments</title>
+			<para>--comments附加注释信息，默认为打开。可以用--skip-comments取消</para>
+			<screen>
+--
+-- Table structure for table `demo`
+--
+
+DROP TABLE IF EXISTS `demo`;	
+
+...
+...
+
+-- Dump completed on 2014-02-13 13:31:05		
+			</screen>
+			<para>使用 --skip-comments后</para>
+			<screen>
+DROP TABLE IF EXISTS `demo`;	
+...
+...			
+			</screen>
+		</section>
 	</section>
 	<section id="mysqladmin">
 		<title>mysqladmin - client for administering a MySQL server</title>
