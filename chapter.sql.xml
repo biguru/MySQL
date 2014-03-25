@@ -146,13 +146,29 @@ FROM products
 			</screen>
 		</section>
 	</section>
-	
 <section id="sql.mysql">
 	<title>MySQL 专有命令</title>
 	<section id="sql_no_cache">
 		<title>SQL_NO_CACHE</title>
 		<screen>
 SELECT /*!40001 SQL_NO_CACHE */ * FROM table
+		</screen>
+	</section>
+	<section id="signal">
+		<title>SIGNAL Syntax</title>
+		<programlisting>
+DROP TRIGGER `members_before_insert`;
+CREATE DEFINER=`neo`@`%` TRIGGER `members_before_insert` BEFORE INSERT ON `members` FOR EACH ROW BEGIN
+	IF new.username IS NOT NULL THEN
+		IF not exists(select username from members_available where username = new.username) THEN
+	   	/*set new.username = NULL;*/
+	   	SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'An error occurred', MYSQL_ERRNO = 1001;
+		END IF;
+	END IF;
+END;
+		</programlisting>
+		<screen>
+
 		</screen>
 	</section>
 </section>
