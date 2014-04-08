@@ -721,6 +721,10 @@ expire-logs-days = 7
 [mysqld]
 slave_skip_errors = 1062
 			</screen>
+			<para>跳过所有错误</para>
+			<screen>
+slave-skip-errors=all			
+			</screen>
 		</section>
 		<section>
 			<title>重置Slave</title>
