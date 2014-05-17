@@ -565,8 +565,10 @@ Slave_SQL_Running: Yes
 
 	<section id="semisynchronous">
 		<title>Semisynchronous Replication</title>
-		<screen>
-		<![CDATA[
+		<section>
+			<title>Master</title>
+			<screen>
+			<![CDATA[
 mysql> SHOW VARIABLES LIKE "have_dynamic_loading";
 +----------------------+-------+
 | Variable_name        | Value |
@@ -576,26 +578,63 @@ mysql> SHOW VARIABLES LIKE "have_dynamic_loading";
 1 row in set (0.00 sec)
 
 mysql>
-		]]>
-		</screen>
-		<para>Master 配置</para>
+			]]>
+			</screen>	
+			<para>Master 配置</para>
+			<screen>
+mysql> install plugin rpl_semi_sync_master SONAME 'semisync_master.so';
+mysql> set global rpl_semi_sync_master_enabled = 1; 
+mysql> set global rpl_semi_sync_master_timeout = 30;
+mysql> select * from mysql.plugin;
++----------------------+--------------------+
+| name                 | dl                 |
++----------------------+--------------------+
+| rpl_semi_sync_master | semisync_master.so |
++----------------------+--------------------+
+1 row in set (0.00 sec)
+			</screen>	
+			<para>状态查看</para>
+			<screen>
+mysql> SHOW VARIABLES LIKE "%semi%";
++------------------------------------+-------+
+| Variable_name                      | Value |
++------------------------------------+-------+
+| rpl_semi_sync_master_enabled       | ON    |
+| rpl_semi_sync_master_timeout       | 10    |
+| rpl_semi_sync_master_trace_level   | 32    |
+| rpl_semi_sync_master_wait_no_slave | ON    |
++------------------------------------+-------+
+4 rows in set (0.00 sec)			
+			</screen>	
+		</section>
+		<section>
+			<title>Slave 配置</title>
+			<screen>
+install plugin rpl_semi_sync_slave soname 'semisync_slave.so';
+set global rpl_semi_sync_slave_enabled = 1;
+stop slave io_thread;
+start slave io_thread;			
+			</screen>
+			<para>Slave 状态查看</para>
+			<screen>
+show global status like 'rpl_semi%';
+			</screen>
+		</section>
+		<section>
+			<title>卸载插件</title>
+			<para>卸载插件 UNINSTALL PLUGIN plugin_name</para>
+			<screen>
+UNINSTALL PLUGIN rpl_semi_sync_master; 	
+UNINSTALL PLUGIN rpl_semi_sync_slave; 			
+			</screen>
+		</section>
+<!-- 		
 		<screen>
-master  > INSTALL PLUGIN rpl_semi_sync_master SONAME ‘libsemisync_master.so’;
-master  > SET GLOBAL rpl_semi_sync_master_enabled=1;
-		</screen>
-		<para>Slave 配置</para>
-		<screen>
-slave-x > INSTALL PLUGIN rpl_semi_sync_slave SONAME ‘libsemisync_slave.so’;
-slave-x > SET GLOBAL rpl_semi_sync_slave_enabled=1;
-		</screen>
-		<screen>
-CREATE USER 'replication'@'192.168.1.%' IDENTIFIED BY 'password';
-GRANT ALL PRIVILEGES ON *.* TO 'replication'@'192.168.1.%' IDENTIFIED BY 'password' WITH GRANT OPTION MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0 ;
 		</screen>
 		<para>master_heartbeat_period</para>
 		<screen>
 STOP SLAVE;
-CHANGE MASTER TO master_heartbeat_period= milliseconds;
+CHANGE MASTER TO master_heartbeat_period=milliseconds;
 START SLAVE;
 		</screen>
 		<screen>
@@ -605,8 +644,11 @@ mysql> CHANGE MASTER TO MASTER_HOST='xxx.xxx.xxx.xxx', MASTER_USER='root', MASTE
 		<screen>
 CHANGE MASTER TO MASTER_HOST=xxx.xxx.xxx.xxx IGNORE_SERVER_IDS=y
 		</screen>
-		<para>编辑my.cnf加入</para>
-		<screen>
+ -->		
+ 		<section>
+ 			<title>my.cnf</title>
+			<para>编辑my.cnf加入</para>
+			<screen>
 # On Master
 [mysqld]
 rpl_semi_sync_master_enabled=1
@@ -615,7 +657,9 @@ rpl_semi_sync_master_timeout=1000 # 1 second
 # On Slave
 [mysqld]
 rpl_semi_sync_slave_enabled=1
-		</screen>
+			</screen>
+ 		</section>
+
 	</section>
 	<section id="multi-master">
 		<title>multi-master replication</title>
