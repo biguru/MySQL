@@ -166,7 +166,7 @@ PARTITION BY HASH(userid)
 PARTITIONS 8;
 		]]>
 		</programlisting>
-
+		<para>使用HASH (year(created)) 替代 RANGE(year(created))</para>
 		<programlisting>
 		<![CDATA[
 CREATE TABLE stuff (
