@@ -113,6 +113,18 @@ mysql> SELECT SUBSTRING('netkiller',4,4);
 1 row in set (0.00 sec)			
 			]]>
 			</screen>
+			<para>与left,right 相同的用法</para>
+			<screen>
+select right('M2014030615410572307:DEPOSIT', 7);
+SELECT SUBSTRING('M2014030615410572307:DEPOSIT', -7);			
+			</screen>
+		</section>
+		<section>
+			<title>SUBSTRING_INDEX</title>
+			<screen>
+SELECT SUBSTRING_INDEX('M2014030615410572307:DEPOSIT', ':', -1);
+SELECT SUBSTRING_INDEX('M2014030615410572307:DEPOSIT', ':', 1);			
+			</screen>
 		</section>
 	</section>
 
